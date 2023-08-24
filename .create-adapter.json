@@ -1,0 +1,45 @@
+{
+    "cli": true,
+    "target": "directory",
+    "adapterName": "sun2000-modbus",
+    "title": "SUN 2000 - ModbusTCP",
+    "description": "Connect to Huawei SUN2000 inverter with Modbus TCP",
+    "keywords": [
+        "inverter",
+        "huawei",
+        "modbus",
+        "luna2000",
+        "sun2000"
+    ],
+    "expert": "no",
+    "features": [
+        "adapter"
+    ],
+    "adminFeatures": [],
+    "type": "hardware",
+    "startMode": "daemon",
+    "connectionType": "local",
+    "dataSource": "poll",
+    "connectionIndicator": "no",
+    "language": "TypeScript",
+    "nodeVersion": "16",
+    "adminUi": "json",
+    "tools": [
+        "ESLint"
+    ],
+    "releaseScript": "yes",
+    "devServer": "yes",
+    "devServerPort": 8081,
+    "indentation": "Space (4)",
+    "quotes": "single",
+    "es6class": "yes",
+    "authorName": "daolis",
+    "authorGithub": "daolis",
+    "authorEmail": "stephan.bechter@gmail.com",
+    "gitRemoteProtocol": "HTTPS",
+    "gitCommit": "no",
+    "defaultBranch": "main",
+    "license": "MIT License",
+    "dependabot": "yes",
+    "creatorVersion": "2.5.0"
+}

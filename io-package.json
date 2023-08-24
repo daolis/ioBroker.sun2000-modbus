@@ -1,0 +1,90 @@
+{
+    "common": {
+        "name": "sun2000-modbus",
+        "version": "0.0.1",
+        "news": {
+            "0.0.1": {
+                "en": "initial release",
+                "de": "Erstveröffentlichung",
+                "ru": "Начальная версия",
+                "pt": "lançamento inicial",
+                "nl": "Eerste uitgave",
+                "fr": "Première version",
+                "it": "Versione iniziale",
+                "es": "Versión inicial",
+                "pl": "Pierwsze wydanie",
+                "uk": "Початкова версія",
+                "zh-cn": "首次出版"
+            }
+        },
+        "title": "SUN 2000 - ModbusTCP",
+        "titleLang": {
+            "en": "SUN 2000 - ModbusTCP",
+            "de": "SUN 2000 – ModbusTCP",
+            "ru": "SUN 2000 - ModbusTCP",
+            "pt": "SOL 2000 - ModbusTCP",
+            "nl": "ZO 2000 - ModbusTCP",
+            "fr": "SOLEIL 2000 - ModbusTCP",
+            "it": "DOM 2000 - ModbusTCP",
+            "es": "SOL 2000 - ModbusTCP",
+            "pl": "NIEDZIELA 2000 – ModbusTCP",
+            "uk": "SUN 2000 - ModbusTCP",
+            "zh-cn": "SUN 2000 - ModbusTCP"
+        },
+        "desc": {
+            "en": "Connect to Huawei SUN2000 inverter with Modbus TCP",
+            "de": "Stellen Sie über Modbus TCP eine Verbindung zum Huawei SUN2000-Wechselrichter her",
+            "ru": "Подключение к инвертору Huawei SUN2000 с помощью Modbus TCP",
+            "pt": "Conecte ao inversor Huawei SUN2000 com Modbus TCP",
+            "nl": "Maak verbinding met de Huawei SUN2000-omvormer met Modbus TCP",
+            "fr": "Connectez-vous à l'onduleur Huawei SUN2000 avec Modbus TCP",
+            "it": "Connettiti all'inverter Huawei SUN2000 con Modbus TCP",
+            "es": "Conéctese al inversor Huawei SUN2000 con Modbus TCP",
+            "pl": "Połącz się z falownikiem Huawei SUN2000 za pomocą protokołu Modbus TCP",
+            "uk": "Підключіться до інвертора Huawei SUN2000 за допомогою Modbus TCP",
+            "zh-cn": "通过Modbus TCP连接华为SUN2000逆变器"
+        },
+        "authors": [
+            "daolis <stephan.bechter@gmail.com>"
+        ],
+        "keywords": [
+            "inverter",
+            "huawei",
+            "modbus",
+            "luna2000",
+            "sun2000"
+        ],
+        "license": "MIT",
+        "platform": "Javascript/Node.js",
+        "main": "build/main.js",
+        "icon": "sun2000-modbus.png",
+        "enabled": true,
+        "extIcon": "https://raw.githubusercontent.com/daolis/ioBroker.sun2000-modbus/main/admin/sun2000-modbus.png",
+        "readme": "https://github.com/daolis/ioBroker.sun2000-modbus/blob/main/README.md",
+        "loglevel": "info",
+        "mode": "daemon",
+        "type": "hardware",
+        "compact": true,
+        "connectionType": "local",
+        "dataSource": "poll",
+        "adminUI": {
+            "config": "json"
+        },
+        "dependencies": [
+            {
+                "js-controller": ">=3.3.22"
+            }
+        ],
+        "globalDependencies": [
+            {
+                "admin": ">=5.1.13"
+            }
+        ]
+    },
+    "native": {
+        "option1": true,
+        "option2": "42"
+    },
+    "objects": [],
+    "instanceObjects": []
+}
