@@ -34,7 +34,6 @@ class Sun2000Modbus extends utils.Adapter {
      */
     private async onReady(): Promise<void> {
         // Initialize your adapter here
-        this.config.updateInterval = 5;
 
         // The adapters config (in the instance object everything under the attribute "native") is accessible via
         // this.config:

@@ -100,9 +100,8 @@ export class InverterStates {
                 mapper: value => Promise.resolve(MeterStatus[value])
             },
             {
-                state: {id: "grid.activePower", name: "Active power", type: 'number', role: 'value.power'},
+                state: {id: "grid.activePower", name: "Active power", type: 'number', role: 'value.power', unit: "W"},
                 register: {reg: 37113, type: ModbusDatatype.int32, length: 2},
-                mapper: value => Promise.resolve(MeterStatus[value])
             }
         ];
     }
