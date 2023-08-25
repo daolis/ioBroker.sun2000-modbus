@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/lib/state_enums.ts"],
+  "sourcesContent": ["export enum StorageStatus {\n    OFFLINE,\n    STANDBY,\n    RUNNING,\n    FAULT,\n    SLEEP_MODE\n}\n\nexport enum StorageForcibleChargeDischarge {\n    STOP,\n    CHARGE,\n    DISCHARGE\n}\n\nexport enum MeterStatus {\n    OFFLINE,\n    ONLINE\n}\n"],
+  "mappings": ";;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAO,IAAK,gBAAL,kBAAKA,mBAAL;AACH,EAAAA,8BAAA;AACA,EAAAA,8BAAA;AACA,EAAAA,8BAAA;AACA,EAAAA,8BAAA;AACA,EAAAA,8BAAA;AALQ,SAAAA;AAAA,GAAA;AAQL,IAAK,iCAAL,kBAAKC,oCAAL;AACH,EAAAA,gEAAA;AACA,EAAAA,gEAAA;AACA,EAAAA,gEAAA;AAHQ,SAAAA;AAAA,GAAA;AAML,IAAK,cAAL,kBAAKC,iBAAL;AACH,EAAAA,0BAAA;AACA,EAAAA,0BAAA;AAFQ,SAAAA;AAAA,GAAA;",
+  "names": ["StorageStatus", "StorageForcibleChargeDischarge", "MeterStatus"]
+}
