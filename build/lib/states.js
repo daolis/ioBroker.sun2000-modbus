@@ -45,11 +45,11 @@ class InverterStates {
     ];
     this.changingFields = [
       {
-        state: { id: "activePower", name: "", type: "number", unit: "W", role: "value.power", desc: "Power currently used" },
+        state: { id: "activePower", name: "Active power", type: "number", unit: "W", role: "value.power", desc: "Power currently used" },
         register: { reg: 32080, type: import_modbus_types.ModbusDatatype.int32, length: 2 }
       },
       {
-        state: { id: "inputPower", name: "", type: "number", unit: "W", role: "value.power", desc: "Power from PV" },
+        state: { id: "inputPower", name: "Input power", type: "number", unit: "W", role: "value.power", desc: "Power from PV" },
         register: { reg: 32064, type: import_modbus_types.ModbusDatatype.int32, length: 2 }
       },
       {
@@ -76,9 +76,8 @@ class InverterStates {
         mapper: (value) => Promise.resolve(import_state_enums.MeterStatus[value])
       },
       {
-        state: { id: "grid.activePower", name: "Active power", type: "number", role: "value.power" },
-        register: { reg: 37113, type: import_modbus_types.ModbusDatatype.int32, length: 2 },
-        mapper: (value) => Promise.resolve(import_state_enums.MeterStatus[value])
+        state: { id: "grid.activePower", name: "Active power", type: "number", role: "value.power", unit: "W" },
+        register: { reg: 37113, type: import_modbus_types.ModbusDatatype.int32, length: 2 }
       }
     ];
   }

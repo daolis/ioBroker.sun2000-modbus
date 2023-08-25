@@ -25,11 +25,6 @@ interface State {
     desc?: string;
 }
 
-interface Channel {
-    id: string;
-    name: string
-}
-
 interface ModbusRegister {
     reg: number;
     type: ModbusDatatype;
@@ -65,11 +60,11 @@ export class InverterStates {
         this.changingFields = [
             // inverter
             {
-                state: {id: "activePower", name: "", type: 'number', unit: "W", role: 'value.power', desc: 'Power currently used'},
+                state: {id: "activePower", name: "Active power", type: 'number', unit: "W", role: 'value.power', desc: 'Power currently used'},
                 register: {reg: 32080, type: ModbusDatatype.int32, length: 2}
             },
             {
-                state: {id: "inputPower", name: "", type: 'number', unit: "W", role: 'value.power', desc: 'Power from PV'},
+                state: {id: "inputPower", name: "Input power", type: 'number', unit: "W", role: 'value.power', desc: 'Power from PV'},
                 register: {reg: 32064, type: ModbusDatatype.int32, length: 2}
             },
 

@@ -33,7 +33,6 @@ class Sun2000Modbus extends utils.Adapter {
     this.on("unload", this.onUnload.bind(this));
   }
   async onReady() {
-    this.config.updateInterval = 5;
     await this.setStateAsync("info.ip", { val: this.config.address, ack: true });
     await this.setStateAsync("info.port", { val: this.config.port, ack: true });
     await this.setStateAsync("info.unitID", { val: this.config.modbusUnitId, ack: true });

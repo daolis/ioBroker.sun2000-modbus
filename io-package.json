@@ -200,7 +200,7 @@
             "_id": "storage",
             "type": "channel",
             "common": {
-                "name": "Storage date",
+                "name": "Storage data",
                 "role": "info",
                 "read": true,
                 "write": false,
