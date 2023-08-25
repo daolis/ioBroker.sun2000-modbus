@@ -1,5 +1,6 @@
 {
     "sun2000-modbus adapter settings": "Adaptereinstellungen für sun2000-modbus",
-    "option1": "Option 1",
-    "option2": "Option 2"
+    "address": "Inverter Adresse",
+    "port": "Port",
+    "updateInterval": "Update Intervall"
 }

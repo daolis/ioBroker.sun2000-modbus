@@ -4,8 +4,10 @@
 declare global {
     namespace ioBroker {
         interface AdapterConfig {
-            option1: boolean;
-            option2: string;
+            address: string;
+            port: number;
+            modbusUnitId: number;
+            updateInterval: number;
         }
     }
 }

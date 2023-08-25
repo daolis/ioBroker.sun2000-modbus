@@ -17,32 +17,31 @@
                 "zh-cn": "首次出版"
             }
         },
-        "title": "SUN 2000 - ModbusTCP",
         "titleLang": {
-            "en": "SUN 2000 - ModbusTCP",
-            "de": "SUN 2000 – ModbusTCP",
-            "ru": "SUN 2000 - ModbusTCP",
-            "pt": "SOL 2000 - ModbusTCP",
-            "nl": "ZO 2000 - ModbusTCP",
-            "fr": "SOLEIL 2000 - ModbusTCP",
-            "it": "DOM 2000 - ModbusTCP",
-            "es": "SOL 2000 - ModbusTCP",
-            "pl": "NIEDZIELA 2000 – ModbusTCP",
-            "uk": "SUN 2000 - ModbusTCP",
-            "zh-cn": "SUN 2000 - ModbusTCP"
+            "en": "Huawei Sun2000 inverter",
+            "de": "Huawei Sun2000 inverter",
+            "ru": "Huawei Sun2000 inverter",
+            "pt": "Huawei Sun2000 inverter",
+            "nl": "Huawei Sun2000 inverter",
+            "fr": "Huawei Sun2000 inverter",
+            "it": "Huawei Sun2000 inverter",
+            "es": "Huawei Sun2000 inverter",
+            "pl": "Huawei Sun2000 inverter",
+            "uk": "Huawei Sun2000 inverter",
+            "zh-cn": "Huawei Sun2000 inverter"
         },
         "desc": {
-            "en": "Connect to Huawei SUN2000 inverter with Modbus TCP",
-            "de": "Stellen Sie über Modbus TCP eine Verbindung zum Huawei SUN2000-Wechselrichter her",
-            "ru": "Подключение к инвертору Huawei SUN2000 с помощью Modbus TCP",
-            "pt": "Conecte ao inversor Huawei SUN2000 com Modbus TCP",
-            "nl": "Maak verbinding met de Huawei SUN2000-omvormer met Modbus TCP",
-            "fr": "Connectez-vous à l'onduleur Huawei SUN2000 avec Modbus TCP",
-            "it": "Connettiti all'inverter Huawei SUN2000 con Modbus TCP",
-            "es": "Conéctese al inversor Huawei SUN2000 con Modbus TCP",
-            "pl": "Połącz się z falownikiem Huawei SUN2000 za pomocą protokołu Modbus TCP",
-            "uk": "Підключіться до інвертора Huawei SUN2000 за допомогою Modbus TCP",
-            "zh-cn": "通过Modbus TCP连接华为SUN2000逆变器"
+            "en": "Connect to Huawei Sun2000 inverter with Modbus TCP",
+            "de": "Stellen Sie über Modbus TCP eine Verbindung zum Huawei Sun2000-Wechselrichter her",
+            "ru": "Подключение к инвертору Huawei Sun2000 с помощью Modbus TCP",
+            "pt": "Conecte ao inversor Huawei Sun2000 com Modbus TCP",
+            "nl": "Maak verbinding met de Huawei Sun2000-omvormer met Modbus TCP",
+            "fr": "Connectez-vous à l'onduleur Huawei Sun2000 avec Modbus TCP",
+            "it": "Connettiti all'inverter Huawei Sun2000 con Modbus TCP",
+            "es": "Conéctese al inversor Huawei Sun2000 con Modbus TCP",
+            "pl": "Połącz się z falownikiem Huawei Sun2000 za pomocą protokołu Modbus TCP",
+            "uk": "Підключіться до інвертора Huawei Sun2000 за допомогою Modbus TCP",
+            "zh-cn": "通过Modbus TCP连接华为Sun2000逆变器"
         },
         "authors": [
             "daolis <stephan.bechter@gmail.com>"
@@ -79,12 +78,131 @@
             {
                 "admin": ">=5.1.13"
             }
+        ],
+        "adminColumns": [
+            {
+                "name": {
+                    "en": "Inverter Adress",
+                    "de": "Wechselrichter Adresse"
+                },
+                "path": "native.address",
+                "width": 500,
+                "align": "left"
+            },
+            {
+                "name": {
+                    "en": "Port",
+                    "de": "Port"
+                },
+                "path": "native.port",
+                "width": 100,
+                "align": "left"
+            },
+            {
+                "name": {
+                    "en": "Modbus unitID",
+                    "de": "Modbus unitID"
+                },
+                "path": "native.modbusUnitId",
+                "width": 100,
+                "align": "left"
+            },
+            {
+                "name": {
+                    "en": "Update interval",
+                    "de": "Update Intervall"
+                },
+                "path": "native.updateInterval",
+                "width": 100,
+                "align": "left"
+            }
         ]
     },
     "native": {
-        "option1": true,
-        "option2": "42"
+        "address": "10.1.3.20",
+        "port": 502,
+        "modbusUnitId": 1,
+        "updateInterval": 5
     },
     "objects": [],
-    "instanceObjects": []
+    "instanceObjects": [
+        {
+            "_id": "info",
+            "type": "channel",
+            "common": {
+                "name": "Information",
+                "role": "info"
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.ip",
+            "type": "state",
+            "common": {
+                "name": "Inverter IP",
+                "type": "string",
+                "role": "indicator.ip",
+                "read": true,
+                "write": false,
+                "desc": "Inverter IP address"
+            }
+        },
+        {
+            "_id": "info.port",
+            "type": "state",
+            "common": {
+                "name": "Modbus port",
+                "type": "number",
+                "role": "indicator.port",
+                "read": true,
+                "write": false,
+                "desc": "Inverter modbus port"
+            }
+        },
+        {
+            "_id": "info.unitID",
+            "type": "state",
+            "common": {
+                "name": "Modbus unit ID",
+                "type": "number",
+                "role": "indicator.id",
+                "read": true,
+                "write": false,
+                "desc": "Inverter modbus unit id"
+            }
+        },
+        {
+            "_id": "info.modbusUpdateInterval",
+            "type": "state",
+            "common": {
+                "name": "Modbus update interval",
+                "type": "number",
+                "role": "value",
+                "read": true,
+                "write": true,
+                "desc": "Inverter modbus update interval",
+                "unit": "sec"
+            }
+        },
+        {
+            "_id": "storage",
+            "type": "channel",
+            "common": {
+                "name": "Storage date",
+                "role": "info",
+                "read": true,
+                "write": false,
+                "desc": "Storage 'realtime' data"
+            },
+            "native": {}
+        },
+        {
+            "_id": "grid",
+            "type": "channel",
+            "common": {
+                "name": "Grid"
+            },
+            "native": {}
+        }
+    ]
 }
