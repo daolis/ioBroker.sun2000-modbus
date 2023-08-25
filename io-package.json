@@ -136,6 +136,18 @@
             "native": {}
         },
         {
+            "_id": "info.connection",
+            "type": "state",
+            "common": {
+                "name": "Inverter connected",
+                "type": "boolean",
+                "role": "indicator.connected",
+                "read": true,
+                "write": false,
+                "desc": "Is the inverter connected?"
+            }
+        },
+        {
             "_id": "info.ip",
             "type": "state",
             "common": {
