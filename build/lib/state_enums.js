@@ -18,6 +18,7 @@ var __copyProps = (to, from, except, desc) => {
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 var state_enums_exports = {};
 __export(state_enums_exports, {
+  InverterStatus: () => InverterStatus,
   MeterStatus: () => MeterStatus,
   StorageForcibleChargeDischarge: () => StorageForcibleChargeDischarge,
   StorageStatus: () => StorageStatus
@@ -42,8 +43,42 @@ var MeterStatus = /* @__PURE__ */ ((MeterStatus2) => {
   MeterStatus2[MeterStatus2["ONLINE"] = 1] = "ONLINE";
   return MeterStatus2;
 })(MeterStatus || {});
+var InverterStatus = /* @__PURE__ */ ((InverterStatus2) => {
+  InverterStatus2[InverterStatus2["Standby_initializing"] = 0] = "Standby_initializing";
+  InverterStatus2[InverterStatus2["Standby_Detecting_Insulation_Resistance"] = 1] = "Standby_Detecting_Insulation_Resistance";
+  InverterStatus2[InverterStatus2["Standby_Detecting_Irradiation"] = 2] = "Standby_Detecting_Irradiation";
+  InverterStatus2[InverterStatus2["Standby_Drid_Detecting"] = 3] = "Standby_Drid_Detecting";
+  InverterStatus2[InverterStatus2["Starting"] = 256] = "Starting";
+  InverterStatus2[InverterStatus2["On_Grid"] = 512] = "On_Grid";
+  InverterStatus2[InverterStatus2["Grid_Connection_PowerLimited"] = 513] = "Grid_Connection_PowerLimited";
+  InverterStatus2[InverterStatus2["Grid_Connection_SelfDerating"] = 514] = "Grid_Connection_SelfDerating";
+  InverterStatus2[InverterStatus2["OffGrid_Running"] = 515] = "OffGrid_Running";
+  InverterStatus2[InverterStatus2["Shutdown_Fault"] = 768] = "Shutdown_Fault";
+  InverterStatus2[InverterStatus2["Shutdown_Command"] = 769] = "Shutdown_Command";
+  InverterStatus2[InverterStatus2["Shutdown_OVGR"] = 770] = "Shutdown_OVGR";
+  InverterStatus2[InverterStatus2["Shutdown_CommunicationDisconnected"] = 771] = "Shutdown_CommunicationDisconnected";
+  InverterStatus2[InverterStatus2["Shutdown_PowerLimited"] = 772] = "Shutdown_PowerLimited";
+  InverterStatus2[InverterStatus2["Shutdown_ManualStartupRequired"] = 773] = "Shutdown_ManualStartupRequired";
+  InverterStatus2[InverterStatus2["Shutdown_DC_SwitchesDdisconnected"] = 774] = "Shutdown_DC_SwitchesDdisconnected";
+  InverterStatus2[InverterStatus2["Shutdown_RapidCutoff"] = 775] = "Shutdown_RapidCutoff";
+  InverterStatus2[InverterStatus2["Shutdown_InputUnderPower"] = 776] = "Shutdown_InputUnderPower";
+  InverterStatus2[InverterStatus2["GridScheduling_cosPHIPCurve"] = 1025] = "GridScheduling_cosPHIPCurve";
+  InverterStatus2[InverterStatus2["GridScheduling_QUCurve"] = 1026] = "GridScheduling_QUCurve";
+  InverterStatus2[InverterStatus2["GridScheduling_PFUCurve"] = 1027] = "GridScheduling_PFUCurve";
+  InverterStatus2[InverterStatus2["GridScheduling_DryContact"] = 1028] = "GridScheduling_DryContact";
+  InverterStatus2[InverterStatus2["GridScheduling_QPCurve"] = 1029] = "GridScheduling_QPCurve";
+  InverterStatus2[InverterStatus2["SpotCheckReady"] = 1280] = "SpotCheckReady";
+  InverterStatus2[InverterStatus2["SpotChecking"] = 1281] = "SpotChecking";
+  InverterStatus2[InverterStatus2["Inspecting"] = 1536] = "Inspecting";
+  InverterStatus2[InverterStatus2["AFCISelfCheck"] = 1792] = "AFCISelfCheck";
+  InverterStatus2[InverterStatus2["IVScanning"] = 2048] = "IVScanning";
+  InverterStatus2[InverterStatus2["DCInputDetection"] = 2304] = "DCInputDetection";
+  InverterStatus2[InverterStatus2["Running_OffGridCharging"] = 2560] = "Running_OffGridCharging";
+  return InverterStatus2;
+})(InverterStatus || {});
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
+  InverterStatus,
   MeterStatus,
   StorageForcibleChargeDischarge,
   StorageStatus

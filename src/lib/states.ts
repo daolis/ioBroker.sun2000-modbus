@@ -1,5 +1,5 @@
 import {ModbusDatatype} from "./modbus/modbus_types";
-import {MeterStatus, StorageForcibleChargeDischarge, StorageStatus} from "./state_enums";
+import {InverterStatus, MeterStatus, StorageForcibleChargeDischarge, StorageStatus} from "./state_enums";
 import {AdapterInstance} from "@iobroker/adapter-core";
 import {ModbusDevice} from "./modbus/modbus_device";
 
@@ -52,20 +52,45 @@ export class InverterStates {
                 register: {reg: 30015, type: ModbusDatatype.string, length: 10}
             },
             {
-                state: {id: "info.ratedPower", name: "Rated power", type: 'number', unit: "W", role: 'state'},
-                register: {reg: 30073, type: ModbusDatatype.int32, length: 2}
+                state: {id: "info.ratedPower", name: "Rated power", type: 'number', unit: "kW", role: 'state'},
+                register: {reg: 30073, type: ModbusDatatype.int32, length: 2, gain: 1000}
             }
 
         ];
         this.changingFields = [
             // inverter
             {
-                state: {id: "activePower", name: "Active power", type: 'number', unit: "W", role: 'value.power', desc: 'Power currently used'},
-                register: {reg: 32080, type: ModbusDatatype.int32, length: 2}
+                state: {id: "activePower", name: "Active power", type: 'number', unit: "kW", role: 'value.power', desc: 'Power currently used'},
+                register: {reg: 32080, type: ModbusDatatype.int32, length: 2, gain: 1000}
             },
             {
-                state: {id: "inputPower", name: "Input power", type: 'number', unit: "W", role: 'value.power', desc: 'Power from PV'},
-                register: {reg: 32064, type: ModbusDatatype.int32, length: 2}
+                state: {id: "inputPower", name: "Input power", type: 'number', unit: "kW", role: 'value.power', desc: 'Power from PV'},
+                register: {reg: 32064, type: ModbusDatatype.int32, length: 2, gain: 1000}
+            },
+            {
+                state: {id: "peakActivePowerCurrenDay", name: "Peak active power of current day", type: 'number', unit: "kW", role: 'value.power.max'},
+                register: {reg: 32078, type: ModbusDatatype.int32, length: 2, gain: 1000}
+            },
+            {
+                state: {id: "efficiency", name: "Efficiency", type: 'number', unit: "%", role: 'value.efficiency'},
+                register: {reg: 32086, type: ModbusDatatype.uint16, length: 1, gain: 100}
+            },
+            {
+                state: {id: "internalTemperature", name: "Internal temperature", type: 'number', unit: "°C", role: 'value.temp'},
+                register: {reg: 32087, type: ModbusDatatype.int16, length: 1, gain: 10}
+            },
+            {
+                state: {id: "deviceStaus", name: "Device status", type: 'string', unit: "", role: 'value.status'},
+                register: {reg: 32089, type: ModbusDatatype.uint16, length: 1},
+                mapper: value => Promise.resolve(InverterStatus[value])
+            },
+            {
+                state: {id: "accumulatedEnergyYield", name: "Accumulated energy yield", type: 'number', unit: "kWh", role: 'value'},
+                register: {reg: 32106, type: ModbusDatatype.uint32, length: 2, gain: 100}
+            },
+            {
+                state: {id: "dailyEnergyYield", name: "Daily energy yield", type: 'number', unit: "kWh", role: 'value'},
+                register: {reg: 32114, type: ModbusDatatype.uint32, length: 2, gain: 100}
             },
 
             // storage
@@ -79,7 +104,7 @@ export class InverterStates {
                 register: {reg: 37760, type: ModbusDatatype.uint16, length: 1, gain: 10}
             },
             {
-                state: {id: "storage.chargeDischargePower", name: "Charge/Discharge power (>0 charging, <0 discharging)", type: 'number', unit: "W", role: 'value.power'},
+                state: {id: "storage.chargeDischargePower", name: "Charge/Discharge power", desc: "(>0 charging, <0 discharging)", type: 'number', unit: "W", role: 'value.power'},
                 register: {reg: 37765, type: ModbusDatatype.int32, length: 2}
             },
             {
@@ -88,15 +113,27 @@ export class InverterStates {
                 mapper: value => Promise.resolve(StorageForcibleChargeDischarge[value])
             },
 
-            // grid
+            // grid (meter)
             {
                 state: {id: "grid.meterStatus", name: "Meter status", type: 'string', role: 'value.status'},
                 register: {reg: 37100, type: ModbusDatatype.uint16, length: 1},
                 mapper: value => Promise.resolve(MeterStatus[value])
             },
             {
-                state: {id: "grid.activePower", name: "Active power", type: 'number', role: 'value.power', unit: "W"},
+                state: {id: "grid.activePower", name: "Active power", type: 'number', role: 'value.power', unit: "W", desc: "(>0 feed-in to the power grid, <0: supply from the power grid)"},
                 register: {reg: 37113, type: ModbusDatatype.int32, length: 2},
+            },
+            {
+                state: {id: "grid.reactivePower", name: "Reactive power", type: 'number', role: 'value.power', unit: "W"},
+                register: {reg: 37115, type: ModbusDatatype.int32, length: 2},
+            },
+            {
+                state: {id: "grid.powerFactor", name: "Power factor", type: 'number', role: 'value.power.factor', unit: "", desc: "(>0 feed-in to the power grid, <0: supply from the power grid)"},
+                register: {reg: 37117, type: ModbusDatatype.int16, length: 1, gain: 1000},
+            },
+            {
+                state: {id: "grid.gridFrequency", name: "Grid frequency", type: 'number', role: 'value.frequency', unit: "Hz"},
+                register: {reg: 37118, type: ModbusDatatype.int16, length: 1, gain: 100},
             }
         ];
     }
@@ -112,6 +149,7 @@ export class InverterStates {
                     type: state.type,
                     role: state.role,
                     unit: state.unit,
+                    desc: state.desc,
                     read: true,
                     write: false
                 },

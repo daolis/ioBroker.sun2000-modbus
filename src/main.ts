@@ -50,6 +50,8 @@ class Sun2000Modbus extends utils.Adapter {
         await this.states.createStates(this);
         await this.states.updateInitialStates(this, this.device);
 
+        await this.setStateAsync("info.connection", true, true);
+
         let self = this;
         this.updateInterval = setInterval(async () => {
             await this.states.updateChangingStates(self, this.device)
