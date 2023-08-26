@@ -14,7 +14,7 @@ export enum StorageForcibleChargeDischarge {
 
 export enum MeterStatus {
     OFFLINE,
-    ONLINE
+    NORMAL
 }
 
 export enum InverterStatus {

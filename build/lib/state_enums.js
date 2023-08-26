@@ -40,7 +40,7 @@ var StorageForcibleChargeDischarge = /* @__PURE__ */ ((StorageForcibleChargeDisc
 })(StorageForcibleChargeDischarge || {});
 var MeterStatus = /* @__PURE__ */ ((MeterStatus2) => {
   MeterStatus2[MeterStatus2["OFFLINE"] = 0] = "OFFLINE";
-  MeterStatus2[MeterStatus2["ONLINE"] = 1] = "ONLINE";
+  MeterStatus2[MeterStatus2["NORMAL"] = 1] = "NORMAL";
   return MeterStatus2;
 })(MeterStatus || {});
 var InverterStatus = /* @__PURE__ */ ((InverterStatus2) => {

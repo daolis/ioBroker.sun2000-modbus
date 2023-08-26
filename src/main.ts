@@ -40,24 +40,20 @@ class Sun2000Modbus extends utils.Adapter {
         await this.setStateAsync("info.unitID", {val: this.config.modbusUnitId, ack: true});
         await this.setStateAsync("info.modbusUpdateInterval", {val: this.config.updateInterval, ack: true});
 
-        this.log.info('config address: ' + this.config.address);
-        this.log.info('config port: ' + this.config.port);
-        this.log.info('config unitID: ' + this.config.modbusUnitId);
-        this.log.info('config updateInterval: ' + this.config.updateInterval);
-
         this.device = new ModbusDevice(this.config.address, this.config.port, this.config.modbusUnitId);
 
+        this.log.info("Create states");
         await this.states.createStates(this);
+        this.log.info("Update initial states");
         await this.states.updateInitialStates(this, this.device);
 
         await this.setStateAsync("info.connection", true, true);
 
         let self = this;
-        this.updateInterval = setInterval(async () => {
-            await this.states.updateChangingStates(self, this.device)
+        this.log.info("Start syncing data from inverter");
+        this.updateInterval = this.setInterval(async () => {
+            await this.states.updateChangingStates(self, this.device);
         }, this.config.updateInterval * 1000);
-
-
     }
 
     /**

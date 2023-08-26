@@ -62,14 +62,10 @@ class ModbusConnection {
     if (!this.isOpen()) {
       await this.open();
     }
-    try {
-      import_loglevel.default.info("Length: " + words);
-      let answer = await this.client.readHoldingRegisters(register, words);
-      import_loglevel.default.debug(`Answer: ${answer}`);
-      return import_modbus_types.ModbusDatatype.fromBuffer(dtype, answer.buffer);
-    } catch (e) {
-      import_loglevel.default.warn("Error while communicating with " + this.ipAddress + ": " + e);
-    }
+    import_loglevel.default.info("Length: " + words);
+    let answer = await this.client.readHoldingRegisters(register, words);
+    import_loglevel.default.debug(`Answer: ${answer}`);
+    return import_modbus_types.ModbusDatatype.fromBuffer(dtype, answer.buffer);
   }
   async readModbusIR(register, dtype, length) {
     let words = import_modbus_types.ModbusDatatype.words(dtype);
@@ -82,14 +78,10 @@ class ModbusConnection {
     if (!this.isOpen()) {
       await this.open();
     }
-    try {
-      import_loglevel.default.info("Length: " + words);
-      let answer = await this.client.readInputRegisters(register, words);
-      import_loglevel.default.debug(answer);
-      return import_modbus_types.ModbusDatatype.fromBuffer(dtype, answer.buffer);
-    } catch (e) {
-      import_loglevel.default.warn("Error while communicating with " + this.ipAddress + ": " + e);
-    }
+    import_loglevel.default.info("Length: " + words);
+    let answer = await this.client.readInputRegisters(register, words);
+    import_loglevel.default.debug(answer);
+    return import_modbus_types.ModbusDatatype.fromBuffer(dtype, answer.buffer);
   }
   async expoBackoffConnect(delay, maxDelay) {
     try {

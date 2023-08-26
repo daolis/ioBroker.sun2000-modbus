@@ -41,6 +41,7 @@ export class ModbusConnection {
      * @param dtype Datatype like signed or unsigned integer
      * @param length Number of occupied Modbus registers
      * @returns converted value from Register
+     * @throws error
      */
     async readModbusHR(register: number, dtype: ModbusDatatype, length?: number): Promise<any> {
         let words = ModbusDatatype.words(dtype);
@@ -53,14 +54,10 @@ export class ModbusConnection {
         if (!this.isOpen()) {
             await this.open();
         }
-        try {
-            log.info("Length: " + words);
-            let answer = await this.client.readHoldingRegisters(register, words);
-            log.debug(`Answer: ${answer}`);
-            return ModbusDatatype.fromBuffer(dtype, answer.buffer);
-        } catch (e) {
-            log.warn("Error while communicating with " + this.ipAddress + ": " + e);
-        }
+        log.info("Length: " + words);
+        let answer = await this.client.readHoldingRegisters(register, words);
+        log.debug(`Answer: ${answer}`);
+        return ModbusDatatype.fromBuffer(dtype, answer.buffer);
     }
 
     /**
@@ -68,7 +65,8 @@ export class ModbusConnection {
      * @param register decimal Modbus Register to read
      * @param dtype Datatype like signed or unsigned integer
      * @param length Number of occupied Modbus registers
-     * @returns readeble value from Register
+     * @returns readable value from Register
+     * @throws error
      */
     async readModbusIR(register: number, dtype: ModbusDatatype, length?: number): Promise<any> {
         let words = ModbusDatatype.words(dtype);
@@ -81,14 +79,10 @@ export class ModbusConnection {
         if (!this.isOpen()) {
             await this.open();
         }
-        try {
-            log.info("Length: " + words);
-            let answer = await this.client.readInputRegisters(register, words);
-            log.debug(answer);
-            return ModbusDatatype.fromBuffer(dtype, answer.buffer);
-        } catch (e) {
-            log.warn("Error while communicating with " + this.ipAddress + ": " + e);
-        }
+        log.info("Length: " + words);
+        let answer = await this.client.readInputRegisters(register, words);
+        log.debug(answer);
+        return ModbusDatatype.fromBuffer(dtype, answer.buffer);
     }
 
     private async expoBackoffConnect(delay: number, maxDelay: number): Promise<any> {

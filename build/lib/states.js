@@ -41,6 +41,10 @@ class InverterStates {
       {
         state: { id: "info.ratedPower", name: "Rated power", type: "number", unit: "kW", role: "state" },
         register: { reg: 30073, type: import_modbus_types.ModbusDatatype.int32, length: 2, gain: 1e3 }
+      },
+      {
+        state: { id: "info.numberMPPTrackers", name: "Number of MPP trackers", type: "number", unit: "", role: "state" },
+        register: { reg: 30072, type: import_modbus_types.ModbusDatatype.uint16, length: 1, gain: 1 }
       }
     ];
     this.changingFields = [
@@ -78,22 +82,33 @@ class InverterStates {
         register: { reg: 32114, type: import_modbus_types.ModbusDatatype.uint32, length: 2, gain: 100 }
       },
       {
+        state: { id: "PV1Voltage", name: "PV1 voltage", type: "number", unit: "V", role: "value.voltage" },
+        register: { reg: 32016, type: import_modbus_types.ModbusDatatype.int16, length: 1, gain: 10 }
+      },
+      {
+        state: { id: "PV1Current", name: "PV1 current", type: "number", unit: "A", role: "value.current" },
+        register: { reg: 32017, type: import_modbus_types.ModbusDatatype.int16, length: 1, gain: 100 }
+      },
+      {
+        state: { id: "PV2Voltage", name: "PV2 voltage", type: "number", unit: "V", role: "value.voltage" },
+        register: { reg: 32018, type: import_modbus_types.ModbusDatatype.int16, length: 1, gain: 10 }
+      },
+      {
+        state: { id: "PV2Current", name: "PV2 current", type: "number", unit: "A", role: "value.current" },
+        register: { reg: 32019, type: import_modbus_types.ModbusDatatype.int16, length: 1, gain: 100 }
+      },
+      {
         state: { id: "storage.runningState", name: "Running state", type: "string", role: "value" },
         register: { reg: 37762, type: import_modbus_types.ModbusDatatype.uint16, length: 1 },
         mapper: (value) => Promise.resolve(import_state_enums.StorageStatus[value])
       },
       {
-        state: { id: "storage.stateOfCapacity", name: "State of capacity", type: "number", unit: "%", role: "value.capacity" },
+        state: { id: "storage.stateOfCapacity", name: "State of capacity", type: "number", unit: "%", role: "value.capacity", desc: "SOC" },
         register: { reg: 37760, type: import_modbus_types.ModbusDatatype.uint16, length: 1, gain: 10 }
       },
       {
         state: { id: "storage.chargeDischargePower", name: "Charge/Discharge power", desc: "(>0 charging, <0 discharging)", type: "number", unit: "W", role: "value.power" },
         register: { reg: 37765, type: import_modbus_types.ModbusDatatype.int32, length: 2 }
-      },
-      {
-        state: { id: "storage.forcibleChargeDischarge", name: "Forcible Charge/Discharge", type: "string", role: "value" },
-        register: { reg: 47100, type: import_modbus_types.ModbusDatatype.uint16, length: 1 },
-        mapper: (value) => Promise.resolve(import_state_enums.StorageForcibleChargeDischarge[value])
       },
       {
         state: { id: "grid.meterStatus", name: "Meter status", type: "string", role: "value.status" },
@@ -109,12 +124,44 @@ class InverterStates {
         register: { reg: 37115, type: import_modbus_types.ModbusDatatype.int32, length: 2 }
       },
       {
-        state: { id: "grid.powerFactor", name: "Power factor", type: "number", role: "value.power.factor", unit: "", desc: "(>0 feed-in to the power grid, <0: supply from the power grid)" },
+        state: { id: "grid.powerFactor", name: "Power factor", type: "number", role: "value.power.factor", unit: "" },
         register: { reg: 37117, type: import_modbus_types.ModbusDatatype.int16, length: 1, gain: 1e3 }
       },
       {
         state: { id: "grid.gridFrequency", name: "Grid frequency", type: "number", role: "value.frequency", unit: "Hz" },
         register: { reg: 37118, type: import_modbus_types.ModbusDatatype.int16, length: 1, gain: 100 }
+      },
+      {
+        state: { id: "grid.phase1Voltage", name: "Phase 1 voltage", type: "number", role: "value.voltage", unit: "V", desc: "also L1, or R voltage" },
+        register: { reg: 37101, type: import_modbus_types.ModbusDatatype.int32, length: 2, gain: 10 }
+      },
+      {
+        state: { id: "grid.phase2Voltage", name: "Phase 2 voltage", type: "number", role: "value.voltage", unit: "V", desc: "also L2, or S voltage" },
+        register: { reg: 37103, type: import_modbus_types.ModbusDatatype.int32, length: 2, gain: 10 }
+      },
+      {
+        state: { id: "grid.phase3Voltage", name: "Phase 3 voltage", type: "number", role: "value.voltage", unit: "V", desc: "also L3, or T voltage" },
+        register: { reg: 37105, type: import_modbus_types.ModbusDatatype.int32, length: 2, gain: 10 }
+      },
+      {
+        state: { id: "grid.phase1Current", name: "Phase 1 current", type: "number", role: "value.current", unit: "A" },
+        register: { reg: 37107, type: import_modbus_types.ModbusDatatype.int32, length: 2, gain: 10 }
+      },
+      {
+        state: { id: "grid.phase2Current", name: "Phase 2 current", type: "number", role: "value.current", unit: "A" },
+        register: { reg: 37109, type: import_modbus_types.ModbusDatatype.int32, length: 2, gain: 10 }
+      },
+      {
+        state: { id: "grid.phase3Current", name: "Phase 3 current", type: "number", role: "value.current", unit: "A" },
+        register: { reg: 37111, type: import_modbus_types.ModbusDatatype.int32, length: 2, gain: 10 }
+      },
+      {
+        state: { id: "grid.positiveActivePower", name: "Positive active power", type: "number", role: "value.power", unit: "kWh", desc: "Electricity fed by the inverter to the power grid." },
+        register: { reg: 37119, type: import_modbus_types.ModbusDatatype.int32, length: 2, gain: 100 }
+      },
+      {
+        state: { id: "grid.reverseActivePower", name: "Reverse active power", type: "number", role: "value.power", unit: "kWh", desc: "Power supplied from the power grid." },
+        register: { reg: 37121, type: import_modbus_types.ModbusDatatype.int32, length: 2, gain: 100 }
       }
     ];
   }
@@ -138,29 +185,14 @@ class InverterStates {
     }
   }
   async updateInitialStates(adapter, device) {
-    let toUpdate = [];
-    for (const field of this.initialFields) {
-      try {
-        let value = await device.readModbusHR(field.register.reg, field.register.type, field.register.length);
-        if (field.register.gain) {
-          value /= field.register.gain;
-        }
-        if (field.mapper) {
-          value = await field.mapper(value);
-        }
-        toUpdate.push({ id: field.state.id, value });
-      } catch {
-      }
-    }
-    for (const stateToUpdate of toUpdate) {
-      if (stateToUpdate.value) {
-        await adapter.setStateAsync(stateToUpdate.id, { val: stateToUpdate.value, ack: true });
-      }
-    }
+    return this.updateStates(adapter, device, this.initialFields);
   }
   async updateChangingStates(adapter, device) {
+    return this.updateStates(adapter, device, this.changingFields);
+  }
+  async updateStates(adapter, device, data) {
     let toUpdate = [];
-    for (const field of this.changingFields) {
+    for (const field of data) {
       try {
         let value = await device.readModbusHR(field.register.reg, field.register.type, field.register.length);
         if (field.register.gain) {
@@ -170,7 +202,9 @@ class InverterStates {
           value = await field.mapper(value);
         }
         toUpdate.push({ id: field.state.id, value });
-      } catch {
+      } catch (e) {
+        adapter.log.warn(`Error while reading from ${device.getIpAddress()}: [${field.register.reg}|${field.register.length}] '' with : ${e}`);
+        break;
       }
     }
     for (const stateToUpdate of toUpdate) {
