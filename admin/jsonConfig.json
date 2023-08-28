@@ -9,7 +9,7 @@
             "tooltip": "The inverters ip address"
         },
         "port": {
-            "type": "text",
+            "type": "number",
             "label": "Port",
             "newLine": true,
             "tooltip": "The modbus TCP port"

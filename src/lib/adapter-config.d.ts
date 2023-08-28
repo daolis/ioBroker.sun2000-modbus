@@ -7,7 +7,8 @@ declare global {
             address: string;
             port: number;
             modbusUnitId: number;
-            updateInterval: number;
+            updateIntervalHigh: number;
+            updateIntervalLow: number;
         }
     }
 }

@@ -20,6 +20,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 var utils = __toESM(require("@iobroker/adapter-core"));
 var import_states = require("./lib/states");
 var import_modbus_device = require("./lib/modbus/modbus_device");
+var import_scheduler = require("./lib/scheduler");
 class Sun2000Modbus extends utils.Adapter {
   constructor(options = {}) {
     super({
@@ -27,27 +28,36 @@ class Sun2000Modbus extends utils.Adapter {
       name: "sun2000-modbus"
     });
     this.updateInterval = null;
-    this.states = new import_states.InverterStates();
+    this.scheduler = new import_scheduler.Scheduler(this);
     this.on("ready", this.onReady.bind(this));
     this.on("stateChange", this.onStateChange.bind(this));
     this.on("unload", this.onUnload.bind(this));
   }
   async onReady() {
+    this.states = new import_states.InverterStates({ intervals: [this.config.updateIntervalHigh, this.config.updateIntervalHigh, this.config.updateIntervalHigh] });
     await this.setStateAsync("info.ip", { val: this.config.address, ack: true });
     await this.setStateAsync("info.port", { val: this.config.port, ack: true });
     await this.setStateAsync("info.unitID", { val: this.config.modbusUnitId, ack: true });
-    await this.setStateAsync("info.modbusUpdateInterval", { val: this.config.updateInterval, ack: true });
+    await this.setStateAsync("info.modbusUpdateIntervalHigh", { val: this.config.updateIntervalHigh, ack: true });
+    await this.setStateAsync("info.modbusUpdateIntervalLow", { val: this.config.updateIntervalLow, ack: true });
     this.device = new import_modbus_device.ModbusDevice(this.config.address, this.config.port, this.config.modbusUnitId);
     this.log.info("Create states");
     await this.states.createStates(this);
     this.log.info("Update initial states");
-    await this.states.updateInitialStates(this, this.device);
+    await this.states.updateStates(this, this.device);
     await this.setStateAsync("info.connection", true, true);
     let self = this;
+    this.scheduler.addInterval("HIGH", this.config.updateIntervalHigh, async () => {
+      return this.states.updateStates(self, this.device, import_states.UpdateIntervalID.HIGH);
+    });
+    this.scheduler.addInterval("LOW", this.config.updateIntervalLow, async () => {
+      return this.states.updateStates(self, this.device, import_states.UpdateIntervalID.LOW);
+    });
+    this.scheduler.init();
     this.log.info("Start syncing data from inverter");
     this.updateInterval = this.setInterval(async () => {
-      await this.states.updateChangingStates(self, this.device);
-    }, this.config.updateInterval * 1e3);
+      await this.scheduler.run();
+    }, 1e3);
   }
   onUnload(callback) {
     try {
