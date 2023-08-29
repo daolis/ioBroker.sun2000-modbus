@@ -35,7 +35,6 @@ export class Scheduler {
             if (this.counter % this.intervals[idx].timeout == 0) {
                 // execute interval
                 this.adapter.log.silly(`Scheduler: run ${this.intervals[idx].name}`);
-                this.adapter.log.debug(`Interval action started [${this.intervals[idx].name}]`);
                 const start = new Date().getTime();
 
                 const updatedCount = await this.intervals[idx].callback();
@@ -50,9 +49,6 @@ export class Scheduler {
             this.counter = 0;
         }
         this.adapter.log.silly(`Scheduler: run callback finished: counter [${this.counter}]`);
-        setTimeout(async () => {
-            await this.run();
-        }, 1000);
     }
 
     private lcm(values: number[]): number {

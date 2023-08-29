@@ -14,9 +14,11 @@ import {Scheduler} from './lib/scheduler';
 class Sun2000Modbus extends utils.Adapter {
 
     private device!: ModbusDevice;
-    private updateInterval: any = null;
+    private timeout: any = null;
+    private watchdogInterval: any = null;
     private states!: InverterStates;
     private scheduler: Scheduler;
+    private lastUpdated!: number;
 
     public constructor(options: Partial<utils.AdapterOptions> = {}) {
         super({
@@ -61,25 +63,47 @@ class Sun2000Modbus extends utils.Adapter {
             return this.states.updateStates(self, this.device, UpdateIntervalID.HIGH);
         });
         this.scheduler.addInterval('LOW', this.config.updateIntervalLow, async () => {
-            return this.states.updateStates(self, this.device, UpdateIntervalID.LOW);
+            const countHigh = await this.states.updateStates(self, this.device, UpdateIntervalID.HIGH);
+            const countLow = await this.states.updateStates(self, this.device, UpdateIntervalID.LOW);
+            return Promise.resolve(countHigh + countLow)
         });
 
         this.scheduler.init();
 
         this.log.info('Start syncing data from inverter');
-        await this.scheduler.run();
+        await this.runSync();
+        const maxInterval = Math.max(this.config.updateIntervalHigh, this.config.updateIntervalLow)
+        this.log.info(`Max interval: [${maxInterval}]`);
+        this.watchdogInterval = this.setInterval(async () => {
+            const timeSinceLastUpdate = (new Date().getTime() - self.lastUpdated) / 1000;
+            this.log.debug(`Watchdog: ${timeSinceLastUpdate}`)
+            if (timeSinceLastUpdate > 2 * maxInterval) {
+                this.log.info(`Re-trigger sync...`)
+                this.clearTimeout(self.timeout);
+                await this.runSync();
+            }
+        }, maxInterval * 1000);
     }
 
-    // private sleep(ms: number) {
-    //     return new Promise(resolve => setTimeout(resolve, ms))
-    // }
+    private async runSync(): Promise<void> {
+        this.timeout = null;
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const self = this;
+        await this.scheduler.run();
+        this.timeout = this.setTimeout(async () => {
+            self.lastUpdated = new Date().getTime();
+            await this.runSync();
+        }, 1000);
+    }
+
     /**
      * Is called when adapter shuts down - callback has to be called under any circumstances!
      */
     private onUnload(callback: () => void): void {
         try {
             this.setState('info.connection', false, true);
-            this.updateInterval && clearInterval(this.updateInterval);
+            this.timeout && this.clearTimeout(this.timeout);
+            this.watchdogInterval && this.clearInterval(this.watchdogInterval);
             this.device.close();
             callback();
         } catch (e) {
