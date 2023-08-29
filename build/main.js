@@ -46,7 +46,7 @@ class Sun2000Modbus extends utils.Adapter {
     this.log.info("Update initial states");
     await this.states.updateStates(this, this.device);
     await this.setStateAsync("info.connection", true, true);
-    let self = this;
+    const self = this;
     this.scheduler.addInterval("HIGH", this.config.updateIntervalHigh, async () => {
       return this.states.updateStates(self, this.device, import_states.UpdateIntervalID.HIGH);
     });
@@ -55,9 +55,7 @@ class Sun2000Modbus extends utils.Adapter {
     });
     this.scheduler.init();
     this.log.info("Start syncing data from inverter");
-    this.updateInterval = this.setInterval(async () => {
-      await this.scheduler.run();
-    }, 1e3);
+    await this.scheduler.run();
   }
   onUnload(callback) {
     try {

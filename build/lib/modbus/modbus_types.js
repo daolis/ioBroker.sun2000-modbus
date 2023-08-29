@@ -18,8 +18,7 @@ var __copyProps = (to, from, except, desc) => {
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 var modbus_types_exports = {};
 __export(modbus_types_exports, {
-  ModbusDatatype: () => ModbusDatatype,
-  ModbusPermission: () => ModbusPermission
+  ModbusDatatype: () => ModbusDatatype
 });
 module.exports = __toCommonJS(modbus_types_exports);
 var import_int64_buffer = require("int64-buffer");
@@ -98,12 +97,14 @@ var ModbusDatatype = /* @__PURE__ */ ((ModbusDatatype2) => {
           return buffer.readUInt16BE(0);
         }
       case 10 /* uint32 */:
+      case 0 /* acc32 */:
         if (buffer.equals(Buffer.from("FFFFFFFF", "hex"))) {
           return void 0;
         } else {
           return buffer.readUInt32BE(0);
         }
       case 11 /* uint64 */:
+      case 1 /* acc64 */:
         if (buffer.equals(Buffer.from("FFFFFFFFFFFFFFFF", "hex"))) {
           return void 0;
         } else {
@@ -115,14 +116,8 @@ var ModbusDatatype = /* @__PURE__ */ ((ModbusDatatype2) => {
   }
   ModbusDatatype2.fromBuffer = fromBuffer;
 })(ModbusDatatype || (ModbusDatatype = {}));
-var ModbusPermission = /* @__PURE__ */ ((ModbusPermission2) => {
-  ModbusPermission2[ModbusPermission2["RW"] = 0] = "RW";
-  ModbusPermission2[ModbusPermission2["RO"] = 1] = "RO";
-  return ModbusPermission2;
-})(ModbusPermission || {});
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
-  ModbusDatatype,
-  ModbusPermission
+  ModbusDatatype
 });
 //# sourceMappingURL=modbus_types.js.map

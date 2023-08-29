@@ -217,7 +217,7 @@ class InverterStates {
     }
   }
   async updateStates(adapter, device, interval) {
-    let toUpdate = [];
+    const toUpdate = [];
     for (const field of this.dataFields) {
       if (field.interval != interval) {
         continue;
@@ -239,9 +239,10 @@ class InverterStates {
     for (const stateToUpdate of toUpdate) {
       if (stateToUpdate.value !== null) {
         await adapter.setStateAsync(stateToUpdate.id, { val: stateToUpdate.value, ack: true });
-        adapter.log.debug(`Synced value ${stateToUpdate.id}, val=[${stateToUpdate.value}]`);
+        adapter.log.silly(`Synced value ${stateToUpdate.id}, val=[${stateToUpdate.value}]`);
       }
     }
+    return Promise.resolve(toUpdate.length);
   }
 }
 // Annotate the CommonJS export names for ESM import in node:

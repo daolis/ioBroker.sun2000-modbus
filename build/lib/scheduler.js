@@ -21,12 +21,10 @@ __export(scheduler_exports, {
   Scheduler: () => Scheduler
 });
 module.exports = __toCommonJS(scheduler_exports);
-var import_async_mutex = require("async-mutex");
 class Scheduler {
   constructor(adapter) {
     this.intervals = [];
     this.counter = 0;
-    this.mutex = new import_async_mutex.Mutex();
     this.adapter = adapter;
   }
   addInterval(name, timeout, callback) {
@@ -38,30 +36,27 @@ class Scheduler {
     this.adapter.log.info(`Scheduler intervals lcm ${this.intervalLcm}`);
   }
   async run() {
-    const self = this;
     this.adapter.log.silly("Run scheduler...");
-    if (self.mutex.isLocked()) {
-      this.adapter.log.silly("Scheduler: Skip run. LOCKED");
-      return;
+    this.adapter.log.silly(`Scheduler: counter ${this.counter}`);
+    for (const idx in this.intervals) {
+      if (this.counter % this.intervals[idx].timeout == 0) {
+        this.adapter.log.silly(`Scheduler: run ${this.intervals[idx].name}`);
+        this.adapter.log.debug(`Interval action started [${this.intervals[idx].name}]`);
+        const start = new Date().getTime();
+        const updatedCount = await this.intervals[idx].callback();
+        const elapsed = new Date().getTime() - start;
+        this.adapter.log.info(`Updated ${updatedCount} registers in ${elapsed / 1e3} sec, [${this.intervals[idx].name}]`);
+      }
     }
-    await self.mutex.runExclusive(async () => {
-      this.adapter.log.silly(`Scheduler: counter ${this.counter}, locked=${self.mutex.isLocked()}`);
-      for (const idx in this.intervals) {
-        if (this.counter % this.intervals[idx].timeout == 0) {
-          this.adapter.log.silly(`Scheduler: run ${this.intervals[idx].name}`);
-          this.adapter.log.debug(`Interval action started [${this.intervals[idx].name}]`);
-          let start = new Date().getTime();
-          await this.intervals[idx].callback();
-          const elapsed = new Date().getTime() - start;
-          this.adapter.log.info(`Interval action finished in ${elapsed / 1e3} sec, [${this.intervals[idx].name}]`);
-        }
-      }
-      this.counter++;
-      if (this.counter == this.intervalLcm) {
-        this.counter = 0;
-      }
-      this.adapter.log.silly("Scheduler: run callback finished");
-    });
+    this.counter++;
+    if (this.counter == this.intervalLcm) {
+      this.adapter.log.debug("Scheduler: Resetting counter");
+      this.counter = 0;
+    }
+    this.adapter.log.silly(`Scheduler: run callback finished: counter [${this.counter}]`);
+    setTimeout(async () => {
+      await this.run();
+    }, 1e3);
   }
   lcm(values) {
     const gcd = (x, y) => !y ? x : gcd(y, x % y);

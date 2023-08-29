@@ -63,7 +63,7 @@ class ModbusConnection {
       await this.open();
     }
     import_loglevel.default.info("Length: " + words);
-    let answer = await this.client.readHoldingRegisters(register, words);
+    const answer = await this.client.readHoldingRegisters(register, words);
     import_loglevel.default.debug(`Answer: ${answer}`);
     return import_modbus_types.ModbusDatatype.fromBuffer(dtype, answer.buffer);
   }
@@ -79,7 +79,7 @@ class ModbusConnection {
       await this.open();
     }
     import_loglevel.default.info("Length: " + words);
-    let answer = await this.client.readInputRegisters(register, words);
+    const answer = await this.client.readInputRegisters(register, words);
     import_loglevel.default.debug(answer);
     return import_modbus_types.ModbusDatatype.fromBuffer(dtype, answer.buffer);
   }

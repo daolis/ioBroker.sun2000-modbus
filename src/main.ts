@@ -7,9 +7,9 @@
 import * as utils from '@iobroker/adapter-core';
 
 // Load your modules here, e.g.:
-import {InverterStates, UpdateIntervalID} from "./lib/states";
-import {ModbusDevice} from "./lib/modbus/modbus_device";
-import {Scheduler} from "./lib/scheduler";
+import {InverterStates, UpdateIntervalID} from './lib/states';
+import {ModbusDevice} from './lib/modbus/modbus_device';
+import {Scheduler} from './lib/scheduler';
 
 class Sun2000Modbus extends utils.Adapter {
 
@@ -39,36 +39,35 @@ class Sun2000Modbus extends utils.Adapter {
 
         // The adapters config (in the instance object everything under the attribute "native") is accessible via
         // this.config:
-        await this.setStateAsync("info.ip", {val: this.config.address, ack: true});
-        await this.setStateAsync("info.port", {val: this.config.port, ack: true});
-        await this.setStateAsync("info.unitID", {val: this.config.modbusUnitId, ack: true});
-        await this.setStateAsync("info.modbusUpdateIntervalHigh", {val: this.config.updateIntervalHigh, ack: true});
-        await this.setStateAsync("info.modbusUpdateIntervalLow", {val: this.config.updateIntervalLow, ack: true});
+        await this.setStateAsync('info.ip', {val: this.config.address, ack: true});
+        await this.setStateAsync('info.port', {val: this.config.port, ack: true});
+        await this.setStateAsync('info.unitID', {val: this.config.modbusUnitId, ack: true});
+        await this.setStateAsync('info.modbusUpdateIntervalHigh', {val: this.config.updateIntervalHigh, ack: true});
+        await this.setStateAsync('info.modbusUpdateIntervalLow', {val: this.config.updateIntervalLow, ack: true});
 
         this.device = new ModbusDevice(this.config.address, this.config.port, this.config.modbusUnitId);
 
-        this.log.info("Create states");
+        this.log.info('Create states');
         await this.states.createStates(this);
-        this.log.info("Update initial states");
+        this.log.info('Update initial states');
         await this.states.updateStates(this, this.device); // no recurring update
 
-        await this.setStateAsync("info.connection", true, true);
+        await this.setStateAsync('info.connection', true, true);
 
-        let self = this;
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const self = this;
 
-        this.scheduler.addInterval("HIGH", this.config.updateIntervalHigh, async () => {
+        this.scheduler.addInterval('HIGH', this.config.updateIntervalHigh, async () => {
             return this.states.updateStates(self, this.device, UpdateIntervalID.HIGH);
         });
-        this.scheduler.addInterval("LOW", this.config.updateIntervalLow, async () => {
-            return  this.states.updateStates(self, this.device, UpdateIntervalID.LOW);
+        this.scheduler.addInterval('LOW', this.config.updateIntervalLow, async () => {
+            return this.states.updateStates(self, this.device, UpdateIntervalID.LOW);
         });
 
         this.scheduler.init();
 
-        this.log.info("Start syncing data from inverter");
-        this.updateInterval = this.setInterval(async () => {
-            await this.scheduler.run();
-        }, 1000);
+        this.log.info('Start syncing data from inverter');
+        await this.scheduler.run();
     }
 
     // private sleep(ms: number) {
@@ -79,7 +78,7 @@ class Sun2000Modbus extends utils.Adapter {
      */
     private onUnload(callback: () => void): void {
         try {
-            this.setState("info.connection", false, true);
+            this.setState('info.connection', false, true);
             this.updateInterval && clearInterval(this.updateInterval);
             this.device.close();
             callback();

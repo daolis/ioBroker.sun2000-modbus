@@ -25,7 +25,7 @@ var import_modbus_util = require("./modbus_util");
 class ModbusDevice {
   constructor(ipAddress, modbusPort = 502, unitId = 1) {
     this.unitId = unitId;
-    this.connection = new import_modbus_util.ModbusConnection(ipAddress, modbusPort, unitId);
+    this.connection = new import_modbus_util.ModbusConnection(ipAddress, modbusPort, this.unitId);
     this.ipAddress = ipAddress;
   }
   getIpAddress() {

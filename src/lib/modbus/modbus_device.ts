@@ -1,5 +1,5 @@
-import {ModbusDatatype} from "./modbus_types";
-import {ModbusConnection} from "./modbus_util";
+import {ModbusDatatype} from './modbus_types';
+import {ModbusConnection} from './modbus_util';
 
 interface Device {
     readModbusHR(register: number, datatype: ModbusDatatype): Promise<any>;
@@ -16,7 +16,7 @@ export class ModbusDevice implements Device {
 
     constructor(ipAddress: string, modbusPort: number = 502, unitId: number = 1 ) {
         this.unitId = unitId;
-        this.connection = new ModbusConnection(ipAddress, modbusPort, unitId);
+        this.connection = new ModbusConnection(ipAddress, modbusPort, this.unitId);
         this.ipAddress = ipAddress;
     }
 
