@@ -54,7 +54,9 @@ class Sun2000Modbus extends utils.Adapter {
         this.log.info('Update initial states');
         await this.states.updateStates(this, this.device); // no recurring update
 
-        await this.setStateAsync('info.connection', true, true);
+        if (this.device.isConnected()) {
+            await this.setStateAsync('info.connection', true, true);
+        }
 
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const self = this;
