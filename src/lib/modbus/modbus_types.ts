@@ -16,6 +16,7 @@ export enum ModbusDatatype {
     buffer
 }
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace ModbusDatatype {
     export function words(dtype: ModbusDatatype): number | undefined {
         switch (dtype) {

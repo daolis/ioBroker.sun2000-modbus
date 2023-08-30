@@ -32,7 +32,7 @@ export class ModbusDevice implements Device {
         return this.connection.readModbusIR(register, datatype, length);
     }
 
-    close(){
+    close(): void{
         this.connection.close();
     }
 
