@@ -46,7 +46,9 @@ class Sun2000Modbus extends utils.Adapter {
     await this.states.createStates(this);
     this.log.info("Update initial states");
     await this.states.updateStates(this, this.device);
-    await this.setStateAsync("info.connection", true, true);
+    if (this.device.isConnected()) {
+      await this.setStateAsync("info.connection", true, true);
+    }
     const self = this;
     this.scheduler.addInterval("HIGH", this.config.updateIntervalHigh, async () => {
       return this.states.updateStates(self, this.device, import_states.UpdateIntervalID.HIGH);
@@ -59,24 +61,29 @@ class Sun2000Modbus extends utils.Adapter {
     this.scheduler.init();
     this.log.info("Start syncing data from inverter");
     await this.runSync();
+    await this.runWatchDog();
+  }
+  async runWatchDog() {
+    this.watchdogInterval && this.clearInterval(this.watchdogInterval);
+    const self = this;
+    this.log.info("Start watchdog");
     const maxInterval = Math.max(this.config.updateIntervalHigh, this.config.updateIntervalLow);
     this.log.info(`Max interval: [${maxInterval}]`);
     this.watchdogInterval = this.setInterval(async () => {
       const timeSinceLastUpdate = (new Date().getTime() - self.lastUpdated) / 1e3;
       this.log.debug(`Watchdog: ${timeSinceLastUpdate}`);
       if (timeSinceLastUpdate > 2 * maxInterval) {
-        this.log.info(`Re-trigger sync...`);
-        this.clearTimeout(self.timeout);
+        this.log.info(`Re-trigger sync... timeoutID: ${self.timeout}`);
         await this.runSync();
       }
     }, maxInterval * 1e3);
   }
   async runSync() {
-    this.timeout = null;
+    this.timeout && this.clearTimeout(this.timeout);
     const self = this;
+    self.lastUpdated = new Date().getTime();
     await this.scheduler.run();
     this.timeout = this.setTimeout(async () => {
-      self.lastUpdated = new Date().getTime();
       await this.runSync();
     }, 1e3);
   }

@@ -74,26 +74,34 @@ class Sun2000Modbus extends utils.Adapter {
 
         this.log.info('Start syncing data from inverter');
         await this.runSync();
+        await this.runWatchDog();
+
+    }
+
+    private async runWatchDog(): Promise<void> {
+        this.watchdogInterval && this.clearInterval(this.watchdogInterval);
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const self = this;
+        this.log.info('Start watchdog');
         const maxInterval = Math.max(this.config.updateIntervalHigh, this.config.updateIntervalLow)
         this.log.info(`Max interval: [${maxInterval}]`);
         this.watchdogInterval = this.setInterval(async () => {
             const timeSinceLastUpdate = (new Date().getTime() - self.lastUpdated) / 1000;
             this.log.debug(`Watchdog: ${timeSinceLastUpdate}`)
             if (timeSinceLastUpdate > 2 * maxInterval) {
-                this.log.info(`Re-trigger sync...`)
-                this.clearTimeout(self.timeout);
+                this.log.info(`Re-trigger sync... timeoutID: ${self.timeout}`)
                 await this.runSync();
             }
         }, maxInterval * 1000);
     }
 
     private async runSync(): Promise<void> {
-        this.timeout = null;
+        this.timeout && this.clearTimeout(this.timeout);
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const self = this;
+        self.lastUpdated = new Date().getTime();
         await this.scheduler.run();
         this.timeout = this.setTimeout(async () => {
-            self.lastUpdated = new Date().getTime();
             await this.runSync();
         }, 1000);
     }

@@ -116,7 +116,12 @@
                 "width": 100,
                 "align": "left"
             }
-        ]
+        ],
+        "plugins": {
+            "sentry": {
+                "dsn": "https://37d37e6a0b134349fc81d3aac954c30b@o123466.ingest.sentry.io/4505792569868288"
+            }
+        }
     },
     "native": {
         "address": "10.1.3.20",
