@@ -62,7 +62,7 @@
         "readme": "https://github.com/daolis/ioBroker.sun2000-modbus/blob/main/README.md",
         "loglevel": "info",
         "mode": "daemon",
-        "type": "hardware",
+        "type": "energy",
         "compact": true,
         "connectionType": "local",
         "dataSource": "poll",
@@ -82,7 +82,7 @@
         "adminColumns": [
             {
                 "name": {
-                    "en": "Inverter Adress",
+                    "en": "Inverter Address",
                     "de": "Wechselrichter Adresse"
                 },
                 "path": "native.address",
@@ -136,7 +136,19 @@
             "_id": "info",
             "type": "channel",
             "common": {
-                "name": "Information",
+                "name": {
+                  "en": "Information",
+                  "de": "Informationen",
+                  "ru": "Информация",
+                  "pt": "Informação",
+                  "nl": "Informatie",
+                  "fr": "Information",
+                  "it": "Informazioni",
+                  "es": "Información",
+                  "pl": "Informacja",
+                  "uk": "Інформація",
+                  "zh-cn": "信息"
+                },
                 "role": "info"
             },
             "native": {}
@@ -145,7 +157,19 @@
             "_id": "info.connection",
             "type": "state",
             "common": {
-                "name": "Inverter connected",
+                "name": {
+                  "en": "Inverter connected",
+                  "de": "Wechselrichter angeschlossen",
+                  "ru": "Инвертор подключен",
+                  "pt": "Inverter conectado",
+                  "nl": "Vertaling:",
+                  "fr": "Inverter connecté",
+                  "it": "Inverter collegato",
+                  "es": "Inverter conectado",
+                  "pl": "Inverter connected",
+                  "uk": "Інвертор підключений",
+                  "zh-cn": "1. 通 息"
+                },
                 "type": "boolean",
                 "role": "indicator.connected",
                 "read": true,
@@ -157,7 +181,19 @@
             "_id": "info.ip",
             "type": "state",
             "common": {
-                "name": "Inverter IP",
+                "name": {
+                  "en": "Inverter IP",
+                  "de": "Inverter IP",
+                  "ru": "Инвертор IP",
+                  "pt": "IP do inversor",
+                  "nl": "IP",
+                  "fr": "Inverter IP",
+                  "it": "Inverter IP",
+                  "es": "Inverter IP",
+                  "pl": "Inverter IP",
+                  "uk": "Інвертор IP",
+                  "zh-cn": "目标"
+                },
                 "type": "string",
                 "role": "indicator.ip",
                 "read": true,
@@ -169,7 +205,19 @@
             "_id": "info.port",
             "type": "state",
             "common": {
-                "name": "Modbus port",
+                "name": {
+                  "en": "Modbus port",
+                  "de": "Modbusport",
+                  "ru": "Порт Modbus",
+                  "pt": "Porta Modbus",
+                  "nl": "Modbus haven",
+                  "fr": "Port de Modbus",
+                  "it": "Porta Modbus",
+                  "es": "Puerto de Modbus",
+                  "pl": "Port",
+                  "uk": "Портфоліо Modbus",
+                  "zh-cn": "蒙德港"
+                },
                 "type": "number",
                 "role": "indicator.port",
                 "read": true,
@@ -181,7 +229,10 @@
             "_id": "info.unitID",
             "type": "state",
             "common": {
-                "name": "Modbus unit ID",
+                "name": {
+                  "en": "Modbus unit ID",
+                  "de": "Modbus unit ID"
+                },
                 "type": "number",
                 "role": "indicator.id",
                 "read": true,
@@ -193,7 +244,19 @@
             "_id": "info.modbusUpdateIntervalHigh",
             "type": "state",
             "common": {
-                "name": "High modbus update interval",
+                "name": {
+                  "en": "High modbus update interval",
+                  "de": "High modbus Update Intervall",
+                  "ru": "Высокий интервал обновления модбусов",
+                  "pt": "Intervalo de atualização do modbus",
+                  "nl": "High Modbus update interval",
+                  "fr": "Intervalle de mise à jour de modbus",
+                  "it": "Alta frequenza di aggiornamento modbus",
+                  "es": "Intervalo de actualización de modbuses altos",
+                  "pl": "High modbus",
+                  "uk": "Високий інтервал оновлення модуля",
+                  "zh-cn": "A. 高压图"
+                },
                 "type": "number",
                 "role": "value",
                 "read": true,
@@ -206,7 +269,19 @@
             "_id": "info.modbusUpdateIntervalLow",
             "type": "state",
             "common": {
-                "name": "Low modbus update interval",
+                "name": {
+                  "en": "Low modbus update interval",
+                  "de": "Low Modbus Update Intervall",
+                  "ru": "Низкий интервал обновления модбусов",
+                  "pt": "Baixo intervalo de atualização do modbus",
+                  "nl": "Law modbus update",
+                  "fr": "Intervalle de mise à jour de modbus",
+                  "it": "Intervallo di aggiornamento modbus basso",
+                  "es": "Intervalo de actualización bajo modbus",
+                  "pl": "Niska wersja interwału",
+                  "uk": "Низький інтервал оновлення модуля",
+                  "zh-cn": "A. 低土壤更新"
+                },
                 "type": "number",
                 "role": "value",
                 "read": true,
@@ -219,7 +294,19 @@
             "_id": "storage",
             "type": "channel",
             "common": {
-                "name": "Storage data",
+                "name": {
+                  "en": "Storage data",
+                  "de": "Akku daten",
+                  "ru": "Данные хранения",
+                  "pt": "Dados de armazenamento",
+                  "nl": "Vertaling:",
+                  "fr": "Données de stockage",
+                  "it": "Dati di archiviazione",
+                  "es": "Datos de almacenamiento",
+                  "pl": "Storage data",
+                  "uk": "Дані зберігання",
+                  "zh-cn": "储存数据"
+                },
                 "role": "info",
                 "read": true,
                 "write": false,
@@ -231,7 +318,19 @@
             "_id": "grid",
             "type": "channel",
             "common": {
-                "name": "Grid"
+                "name": {
+                  "en": "Grid",
+                  "de": "Netz",
+                  "ru": "Грид",
+                  "pt": "Grade",
+                  "nl": "Grid",
+                  "fr": "Grid",
+                  "it": "Griglia",
+                  "es": "Grid",
+                  "pl": "Grid",
+                  "uk": "Сітка",
+                  "zh-cn": "Grid"
+                }
             },
             "native": {}
         }

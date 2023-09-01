@@ -5,7 +5,7 @@
         "address": {
             "type": "text",
             "label": "Address",
-            "newLine": true,
+            "newLine": false,
             "tooltip": "The inverters ip address"
         },
         "port": {
@@ -20,11 +20,17 @@
             "newLine": true,
             "tooltip": "The modbus unit id"
         },
-        "updateInterval": {
+        "updateIntervalHigh": {
             "type": "number",
             "label": "Update interval (s)",
             "newLine": true,
-            "tooltip": "The update interval to update the values from the inverter"
+            "tooltip": "Fast update interval to update the values from the inverter"
+        },
+        "updateIntervalLow": {
+            "type": "number",
+            "label": "Low Update interval (s)",
+            "newLine": true,
+            "tooltip": "Slower update interval for values which do not need a fast update"
         }
     }
 }

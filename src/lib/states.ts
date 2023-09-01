@@ -65,8 +65,8 @@ export class InverterStates {
                 register: {reg: 30015, type: ModbusDatatype.string, length: 10}
             },
             {
-                state: {id: 'info.ratedPower', name: 'Rated power', type: 'number', unit: 'kW', role: 'state'},
-                register: {reg: 30073, type: ModbusDatatype.int32, length: 2, gain: 1000}
+                state: {id: 'info.ratedPower', name: 'Rated power', type: 'number', unit: 'W', role: 'state'},
+                register: {reg: 30073, type: ModbusDatatype.int32, length: 2}
             },
             {
                 state: {id: 'info.numberMPPTrackers', name: 'Number of MPP trackers', type: 'number', unit: '', role: 'state'},
@@ -76,18 +76,18 @@ export class InverterStates {
             // inverter
             {
                 interval: UpdateIntervalID.HIGH,
-                state: {id: 'activePower', name: 'Active power', type: 'number', unit: 'kW', role: 'value.power', desc: 'Power currently used'},
-                register: {reg: 32080, type: ModbusDatatype.int32, length: 2, gain: 1000}
+                state: {id: 'activePower', name: 'Active power', type: 'number', unit: 'W', role: 'value.power', desc: 'Power currently used'},
+                register: {reg: 32080, type: ModbusDatatype.int32, length: 2}
             },
             {
                 interval: UpdateIntervalID.HIGH,
-                state: {id: 'inputPower', name: 'Input power', type: 'number', unit: 'kW', role: 'value.power', desc: 'Power from PV'},
-                register: {reg: 32064, type: ModbusDatatype.int32, length: 2, gain: 1000}
+                state: {id: 'inputPower', name: 'Input power', type: 'number', unit: 'W', role: 'value.power', desc: 'Power from PV'},
+                register: {reg: 32064, type: ModbusDatatype.int32, length: 2}
             },
             {
                 interval: UpdateIntervalID.LOW,
-                state: {id: 'peakActivePowerCurrenDay', name: 'Peak active power of current day', type: 'number', unit: 'kW', role: 'value.power.max'},
-                register: {reg: 32078, type: ModbusDatatype.int32, length: 2, gain: 1000}
+                state: {id: 'peakActivePowerCurrenDay', name: 'Peak active power of current day', type: 'number', unit: 'W', role: 'value.power.max'},
+                register: {reg: 32078, type: ModbusDatatype.int32, length: 2}
             },
             {
                 interval: UpdateIntervalID.LOW,
@@ -153,6 +153,9 @@ export class InverterStates {
                 state: {id: 'storage.chargeDischargePower', name: 'Charge/Discharge power', desc: '(>0 charging, <0 discharging)', type: 'number', unit: 'W', role: 'value.power'},
                 register: {reg: 37765, type: ModbusDatatype.int32, length: 2}
             },
+            // <TODOO date="31.08.2023" author="Stephan Bechter">
+            // TODO: add Charge discharge capacity per day
+            // </TODOO>
 
             // grid (meter)
             {
@@ -200,17 +203,17 @@ export class InverterStates {
             {
                 interval: UpdateIntervalID.LOW,
                 state: {id: 'grid.phase1Current', name: 'Phase 1 current', type: 'number', role: 'value.current', unit: 'A'},
-                register: {reg: 37107, type: ModbusDatatype.int32, length: 2, gain: 10},
+                register: {reg: 37107, type: ModbusDatatype.int32, length: 2, gain: 100},
             },
             {
                 interval: UpdateIntervalID.LOW,
                 state: {id: 'grid.phase2Current', name: 'Phase 2 current', type: 'number', role: 'value.current', unit: 'A'},
-                register: {reg: 37109, type: ModbusDatatype.int32, length: 2, gain: 10},
+                register: {reg: 37109, type: ModbusDatatype.int32, length: 2, gain: 100},
             },
             {
                 interval: UpdateIntervalID.LOW,
                 state: {id: 'grid.phase3Current', name: 'Phase 3 current', type: 'number', role: 'value.current', unit: 'A'},
-                register: {reg: 37111, type: ModbusDatatype.int32, length: 2, gain: 10},
+                register: {reg: 37111, type: ModbusDatatype.int32, length: 2, gain: 100},
             },
 
             {

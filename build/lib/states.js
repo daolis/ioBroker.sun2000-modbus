@@ -46,8 +46,8 @@ class InverterStates {
         register: { reg: 30015, type: import_modbus_types.ModbusDatatype.string, length: 10 }
       },
       {
-        state: { id: "info.ratedPower", name: "Rated power", type: "number", unit: "kW", role: "state" },
-        register: { reg: 30073, type: import_modbus_types.ModbusDatatype.int32, length: 2, gain: 1e3 }
+        state: { id: "info.ratedPower", name: "Rated power", type: "number", unit: "W", role: "state" },
+        register: { reg: 30073, type: import_modbus_types.ModbusDatatype.int32, length: 2 }
       },
       {
         state: { id: "info.numberMPPTrackers", name: "Number of MPP trackers", type: "number", unit: "", role: "state" },
@@ -55,18 +55,18 @@ class InverterStates {
       },
       {
         interval: 0 /* HIGH */,
-        state: { id: "activePower", name: "Active power", type: "number", unit: "kW", role: "value.power", desc: "Power currently used" },
-        register: { reg: 32080, type: import_modbus_types.ModbusDatatype.int32, length: 2, gain: 1e3 }
+        state: { id: "activePower", name: "Active power", type: "number", unit: "W", role: "value.power", desc: "Power currently used" },
+        register: { reg: 32080, type: import_modbus_types.ModbusDatatype.int32, length: 2 }
       },
       {
         interval: 0 /* HIGH */,
-        state: { id: "inputPower", name: "Input power", type: "number", unit: "kW", role: "value.power", desc: "Power from PV" },
-        register: { reg: 32064, type: import_modbus_types.ModbusDatatype.int32, length: 2, gain: 1e3 }
+        state: { id: "inputPower", name: "Input power", type: "number", unit: "W", role: "value.power", desc: "Power from PV" },
+        register: { reg: 32064, type: import_modbus_types.ModbusDatatype.int32, length: 2 }
       },
       {
         interval: 1 /* LOW */,
-        state: { id: "peakActivePowerCurrenDay", name: "Peak active power of current day", type: "number", unit: "kW", role: "value.power.max" },
-        register: { reg: 32078, type: import_modbus_types.ModbusDatatype.int32, length: 2, gain: 1e3 }
+        state: { id: "peakActivePowerCurrenDay", name: "Peak active power of current day", type: "number", unit: "W", role: "value.power.max" },
+        register: { reg: 32078, type: import_modbus_types.ModbusDatatype.int32, length: 2 }
       },
       {
         interval: 1 /* LOW */,
@@ -174,17 +174,17 @@ class InverterStates {
       {
         interval: 1 /* LOW */,
         state: { id: "grid.phase1Current", name: "Phase 1 current", type: "number", role: "value.current", unit: "A" },
-        register: { reg: 37107, type: import_modbus_types.ModbusDatatype.int32, length: 2, gain: 10 }
+        register: { reg: 37107, type: import_modbus_types.ModbusDatatype.int32, length: 2, gain: 100 }
       },
       {
         interval: 1 /* LOW */,
         state: { id: "grid.phase2Current", name: "Phase 2 current", type: "number", role: "value.current", unit: "A" },
-        register: { reg: 37109, type: import_modbus_types.ModbusDatatype.int32, length: 2, gain: 10 }
+        register: { reg: 37109, type: import_modbus_types.ModbusDatatype.int32, length: 2, gain: 100 }
       },
       {
         interval: 1 /* LOW */,
         state: { id: "grid.phase3Current", name: "Phase 3 current", type: "number", role: "value.current", unit: "A" },
-        register: { reg: 37111, type: import_modbus_types.ModbusDatatype.int32, length: 2, gain: 10 }
+        register: { reg: 37111, type: import_modbus_types.ModbusDatatype.int32, length: 2, gain: 100 }
       },
       {
         interval: 1 /* LOW */,
