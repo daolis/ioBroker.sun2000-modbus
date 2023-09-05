@@ -315,6 +315,40 @@
             "native": {}
         },
         {
+            "_id": "storage.chargePower",
+            "type": "state",
+            "common": {
+                "name": {
+                  "en": "Charge power",
+                  "de": "Leistung laden"
+                },
+                "type":"number",
+                "unit": "W",
+                "role": "value",
+                "read": true,
+                "write": false,
+                "desc": "Calculated: Only 0 and positive values from chargeDischargePower"
+            },
+            "native": {}
+        },
+        {
+            "_id": "storage.dischargePower",
+            "type": "state",
+            "common": {
+                "name": {
+                  "en": "Discharge power",
+                  "de": "Leistung entladen"
+                },
+                "type":"number",
+                "unit": "W",
+                "role": "value",
+                "read": true,
+                "write": false,
+                "desc": "Calculated: Only 0 and negative values from chargeDischargePower"
+            },
+            "native": {}
+        },
+        {
             "_id": "grid",
             "type": "channel",
             "common": {

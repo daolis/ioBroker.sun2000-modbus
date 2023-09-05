@@ -128,7 +128,12 @@ class InverterStates {
       {
         interval: 0 /* HIGH */,
         state: { id: "storage.chargeDischargePower", name: "Charge/Discharge power", desc: "(>0 charging, <0 discharging)", type: "number", unit: "W", role: "value.power" },
-        register: { reg: 37765, type: import_modbus_types.ModbusDatatype.int32, length: 2 }
+        register: { reg: 37765, type: import_modbus_types.ModbusDatatype.int32, length: 2 },
+        postUpdateHook: async (adapter, value) => {
+          await adapter.setStateAsync("storage.chargePower", { val: Math.max(0, value), ack: true });
+          await adapter.setStateAsync("storage.dischargePower", { val: Math.min(0, value), ack: true });
+          return Promise.resolve();
+        }
       },
       {
         interval: 1 /* LOW */,
@@ -201,7 +206,7 @@ class InverterStates {
   async createStates(adapter) {
     for (const field of this.dataFields) {
       const state = field.state;
-      await adapter.setObjectNotExistsAsync(state.id, {
+      await adapter.setObjectAsync(state.id, {
         type: "state",
         common: {
           name: state.name,
@@ -230,7 +235,7 @@ class InverterStates {
         if (field.mapper) {
           value = await field.mapper(value);
         }
-        toUpdate.push({ id: field.state.id, value });
+        toUpdate.push({ id: field.state.id, value, postUpdateHook: field.postUpdateHook });
       } catch (e) {
         adapter.log.warn(`Error while reading from ${device.getIpAddress()}: [${field.register.reg}|${field.register.length}] '' with : ${e}`);
         break;
@@ -239,6 +244,9 @@ class InverterStates {
     for (const stateToUpdate of toUpdate) {
       if (stateToUpdate.value !== null) {
         await adapter.setStateAsync(stateToUpdate.id, { val: stateToUpdate.value, ack: true });
+        if (stateToUpdate.postUpdateHook) {
+          await stateToUpdate.postUpdateHook(adapter, stateToUpdate.value);
+        }
         adapter.log.silly(`Synced value ${stateToUpdate.id}, val=[${stateToUpdate.value}]`);
       }
     }

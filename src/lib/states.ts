@@ -3,25 +3,28 @@ import {InverterStatus, MeterStatus, StorageStatus} from './state_enums';
 import {AdapterInstance} from '@iobroker/adapter-core';
 import {ModbusDevice} from './modbus/modbus_device';
 
-type MapperFn = (value: any) => Promise<string>
+type MapperFn = (value: any) => Promise<any>
+type PostUpdateHookFn = (adapter: AdapterInstance, value: any) => Promise<void>
 
 interface DataField {
     interval?: UpdateIntervalID;
     state: State;
     register: ModbusRegister;
-    mapper?: MapperFn
+    mapper?: MapperFn;
+    postUpdateHook?: PostUpdateHookFn;
 }
 
 interface StateToUpdate {
-    id: string,
-    value: any
+    id: string;
+    value: any;
+    postUpdateHook?: PostUpdateHookFn;
 }
 
 interface State {
     id: string;
-    name: string
+    name: string;
     type: ioBroker.CommonType;
-    role: string
+    role: string;
     unit?: string;
     desc?: string;
 }
@@ -151,7 +154,12 @@ export class InverterStates {
             {
                 interval: UpdateIntervalID.HIGH,
                 state: {id: 'storage.chargeDischargePower', name: 'Charge/Discharge power', desc: '(>0 charging, <0 discharging)', type: 'number', unit: 'W', role: 'value.power'},
-                register: {reg: 37765, type: ModbusDatatype.int32, length: 2}
+                register: {reg: 37765, type: ModbusDatatype.int32, length: 2},
+                postUpdateHook: async (adapter, value) => {
+                    await adapter.setStateAsync('storage.chargePower', {val: Math.max(0, value), ack: true});
+                    await adapter.setStateAsync('storage.dischargePower', {val: Math.min(0, value), ack: true});
+                    return Promise.resolve()
+                }
             },
             // <TODOO date="31.08.2023" author="Stephan Bechter">
             // TODO: add Charge discharge capacity per day
@@ -232,7 +240,7 @@ export class InverterStates {
     public async createStates(adapter: AdapterInstance): Promise<void> {
         for (const field of this.dataFields) {
             const state = field.state
-            await adapter.setObjectNotExistsAsync(state.id, {
+            await adapter.setObjectAsync(state.id, {
                 type: 'state',
                 common: {
                     name: state.name,
@@ -264,7 +272,7 @@ export class InverterStates {
                 if (field.mapper) {
                     value = await field.mapper(value);
                 }
-                toUpdate.push({id: field.state.id, value: value});
+                toUpdate.push({id: field.state.id, value: value, postUpdateHook: field.postUpdateHook});
             } catch (e) {
                 adapter.log.warn(`Error while reading from ${device.getIpAddress()}: [${field.register.reg}|${field.register.length}] '' with : ${e}`);
                 break;
@@ -274,6 +282,9 @@ export class InverterStates {
         for (const stateToUpdate of toUpdate) {
             if (stateToUpdate.value !== null) {
                 await adapter.setStateAsync(stateToUpdate.id, {val: stateToUpdate.value, ack: true});
+                if (stateToUpdate.postUpdateHook) {
+                    await stateToUpdate.postUpdateHook(adapter, stateToUpdate.value);
+                }
                 adapter.log.silly(`Synced value ${stateToUpdate.id}, val=[${stateToUpdate.value}]`);
             }
         }
