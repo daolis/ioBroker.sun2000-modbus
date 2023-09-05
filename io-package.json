@@ -367,6 +367,40 @@
                 }
             },
             "native": {}
+        },
+        {
+            "_id": "grid.feedIn",
+            "type": "state",
+            "common": {
+                "name": {
+                  "en": "Feed-In power",
+                  "de": "Leistung Einspeisung"
+                },
+                "type":"number",
+                "unit": "W",
+                "role": "value",
+                "read": true,
+                "write": false,
+                "desc": "Calculated: Only 0 and positive values from grid.activePower"
+            },
+            "native": {}
+        },
+        {
+            "_id": "grid.supplyFrom",
+            "type": "state",
+            "common": {
+                "name": {
+                  "en": "Power supply from grid",
+                  "de": "Leistung Versorgung vom Netz"
+                },
+                "type":"number",
+                "unit": "W",
+                "role": "value",
+                "read": true,
+                "write": false,
+                "desc": "Calculated: Only 0 and negative values from grid.activePower"
+            },
+            "native": {}
         }
     ]
 }

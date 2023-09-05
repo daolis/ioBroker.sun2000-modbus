@@ -157,7 +157,7 @@ export class InverterStates {
                 register: {reg: 37765, type: ModbusDatatype.int32, length: 2},
                 postUpdateHook: async (adapter, value) => {
                     await adapter.setStateAsync('storage.chargePower', {val: Math.max(0, value), ack: true});
-                    await adapter.setStateAsync('storage.dischargePower', {val: Math.min(0, value), ack: true});
+                    await adapter.setStateAsync('storage.dischargePower', {val: Math.abs(Math.min(0, value)), ack: true});
                     return Promise.resolve()
                 }
             },
@@ -176,6 +176,12 @@ export class InverterStates {
                 interval: UpdateIntervalID.HIGH,
                 state: {id: 'grid.activePower', name: 'Active power', type: 'number', role: 'value.power', unit: 'W', desc: '(>0 feed-in to the power grid, <0: supply from the power grid)'},
                 register: {reg: 37113, type: ModbusDatatype.int32, length: 2},
+                postUpdateHook: async (adapter, value) => {
+                    await adapter.setStateAsync('grid.feedIn', {val: Math.max(0, value), ack: true});
+                    await adapter.setStateAsync('grid.supplyFrom', {val: Math.abs(Math.min(0, value)), ack: true});
+                    return Promise.resolve()
+                }
+
             },
             {
                 interval: UpdateIntervalID.LOW,
