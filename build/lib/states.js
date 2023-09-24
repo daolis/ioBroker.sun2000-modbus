@@ -130,9 +130,10 @@ class InverterStates {
         state: { id: "storage.chargeDischargePower", name: "Charge/Discharge power", desc: "(>0 charging, <0 discharging)", type: "number", unit: "W", role: "value.power" },
         register: { reg: 37765, type: import_modbus_types.ModbusDatatype.int32, length: 2 },
         postUpdateHook: async (adapter, value) => {
-          await adapter.setStateAsync("storage.chargePower", { val: Math.max(0, value), ack: true });
-          await adapter.setStateAsync("storage.dischargePower", { val: Math.abs(Math.min(0, value)), ack: true });
-          return Promise.resolve();
+          return Promise.resolve(/* @__PURE__ */ new Map([
+            ["storage.chargePower", { id: "storage.chargePower", value: Math.max(0, value) }],
+            ["storage.dischargePower", { id: "storage.dischargePower", value: Math.abs(Math.min(0, value)) }]
+          ]));
         }
       },
       {
@@ -146,9 +147,10 @@ class InverterStates {
         state: { id: "grid.activePower", name: "Active power", type: "number", role: "value.power", unit: "W", desc: "(>0 feed-in to the power grid, <0: supply from the power grid)" },
         register: { reg: 37113, type: import_modbus_types.ModbusDatatype.int32, length: 2 },
         postUpdateHook: async (adapter, value) => {
-          await adapter.setStateAsync("grid.feedIn", { val: Math.max(0, value), ack: true });
-          await adapter.setStateAsync("grid.supplyFrom", { val: Math.abs(Math.min(0, value)), ack: true });
-          return Promise.resolve();
+          return Promise.resolve(/* @__PURE__ */ new Map([
+            ["grid.feedIn", { id: "grid.feedIn", value: Math.max(0, value) }],
+            ["grid.supplyFrom", { id: "grid.supplyFrom", value: Math.abs(Math.min(0, value)) }]
+          ]));
         }
       },
       {
@@ -243,7 +245,7 @@ class InverterStates {
     }
   }
   async updateStates(adapter, device, interval) {
-    const toUpdate = /* @__PURE__ */ new Map();
+    let toUpdate = /* @__PURE__ */ new Map();
     for (const field of this.dataFields) {
       if (field.interval != interval) {
         continue;
@@ -256,23 +258,20 @@ class InverterStates {
         if (field.mapper) {
           value = await field.mapper(value);
         }
-        toUpdate.set(field.state.id, { id: field.state.id, value, postUpdateHook: field.postUpdateHook });
+        toUpdate.set(field.state.id, { id: field.state.id, value });
+        if (field.postUpdateHook) {
+          const hookUpdates = await field.postUpdateHook(adapter, value);
+          for (const entry of hookUpdates.entries()) {
+            toUpdate.set(entry[0], entry[1]);
+          }
+        }
       } catch (e) {
         adapter.log.warn(`Error while reading from ${device.getIpAddress()}: [${field.register.reg}|${field.register.length}] '' with : ${e}`);
         break;
       }
     }
-    for (const updateEntry of toUpdate.values()) {
-      adapter.log.debug(`Update value ${updateEntry.id}, val=[${updateEntry.value}]`);
-      if (updateEntry.value !== null) {
-        await adapter.setStateAsync(updateEntry.id, { val: updateEntry.value, ack: true });
-        if (updateEntry.postUpdateHook) {
-          await updateEntry.postUpdateHook(adapter, updateEntry.value);
-        }
-        adapter.log.silly(`Fetched value ${updateEntry.id}, val=[${updateEntry.value}]`);
-      }
-    }
-    return Promise.resolve(toUpdate.size);
+    toUpdate = this.runPostFetchHooks(adapter, toUpdate, interval);
+    return this.updateAdapterStates(adapter, toUpdate);
   }
   runPostFetchHooks(adapter, toUpdate, interval) {
     for (const postFetchHook of this.postFetchUpdateHooks) {
@@ -284,6 +283,18 @@ class InverterStates {
       }
     }
     return toUpdate;
+  }
+  async updateAdapterStates(adapter, toUpdate) {
+    for (const updateEntry of toUpdate.values()) {
+      if (updateEntry.value !== null) {
+        await adapter.setStateAsync(updateEntry.id, { val: updateEntry.value, ack: true });
+        if (updateEntry.postUpdateHook) {
+          await updateEntry.postUpdateHook(adapter, updateEntry.value);
+        }
+        adapter.log.silly(`Fetched value ${updateEntry.id}, val=[${updateEntry.value}]`);
+      }
+    }
+    return Promise.resolve(toUpdate.size);
   }
 }
 // Annotate the CommonJS export names for ESM import in node:

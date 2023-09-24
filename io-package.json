@@ -299,9 +299,10 @@
                   "de": "Gesamtverbrauch"
                 },
                 "role": "value",
+                "unit":  "W",
                 "read": true,
                 "write": false,
-                "desc": "Total power use"
+                "desc": "Total power use ('inputPower' + 'grid.supplyFrom')"
             },
             "native": {}
         },
