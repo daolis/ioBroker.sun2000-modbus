@@ -249,20 +249,20 @@ export class InverterStates {
             },
         ];
         this.postFetchUpdateHooks = [
-            // {
-            //     interval: UpdateIntervalID.HIGH,
-            //     hookFn: (adapter: AdapterInstance, toUpdate: Map<string, StateToUpdate>) => {
-            //         const powerFromGrid = toUpdate.get('grid.supplyFrom');
-            //         const powerActiveInverter = toUpdate.get('activePower');
-            //         const totalPowerUse = powerFromGrid?.value + powerActiveInverter?.value;
-            //         adapter.log.silly(`PostFetchHook: calculate totalPowerUse ${powerFromGrid?.value}, ${powerActiveInverter?.value}, ${totalPowerUse}`);
-            //         const result = new Map();
-            //         if (totalPowerUse) {
-            //             result.set('totalPowerUse', {id: 'totalPowerUse', value: totalPowerUse})
-            //         }
-            //         return result;
-            //     }
-            // }
+            {
+                interval: UpdateIntervalID.HIGH,
+                hookFn: (adapter: AdapterInstance, toUpdate: Map<string, StateToUpdate>) => {
+                    const powerFromGrid = toUpdate.get('grid.supplyFrom');
+                    const powerActiveInverter = toUpdate.get('activePower');
+                    const totalPowerUse = powerFromGrid?.value + powerActiveInverter?.value;
+                    adapter.log.silly(`PostFetchHook: calculate totalPowerUse ${powerFromGrid?.value}, ${powerActiveInverter?.value}, ${totalPowerUse}`);
+                    const result = new Map();
+                    if (totalPowerUse) {
+                        result.set('totalPowerUse', {id: 'totalPowerUse', value: totalPowerUse})
+                    }
+                    return result;
+                }
+            }
         ];
     }
 
@@ -287,7 +287,7 @@ export class InverterStates {
 
 
     public async updateStates(adapter: AdapterInstance, device: ModbusDevice, interval?: UpdateIntervalID): Promise<number> {
-        let toUpdate = new Map<string, StateToUpdate>;
+        const toUpdate = new Map<string, StateToUpdate>;
         for (const field of this.dataFields) {
             if (field.interval != interval) {
                 continue;
@@ -309,7 +309,18 @@ export class InverterStates {
         }
         //toUpdate = this.runPostFetchHooks(adapter, toUpdate, interval);
 
-        return this.updateAdapterStates(adapter, toUpdate);
+        for(const updateEntry of toUpdate.values()) {
+            adapter.log.debug(`Update value ${updateEntry.id}, val=[${updateEntry.value}]`);
+            if (updateEntry.value !== null) {
+                await adapter.setStateAsync(updateEntry.id, {val: updateEntry.value, ack: true});
+                if (updateEntry.postUpdateHook) {
+                    await updateEntry.postUpdateHook(adapter, updateEntry.value);
+                }
+                adapter.log.silly(`Fetched value ${updateEntry.id}, val=[${updateEntry.value}]`);
+            }
+        }
+        return Promise.resolve(toUpdate.size);
+
     }
 
     public runPostFetchHooks(adapter: AdapterInstance, toUpdate: Map<string, StateToUpdate>, interval: UpdateIntervalID | undefined): Map<string, StateToUpdate> {
@@ -324,16 +335,6 @@ export class InverterStates {
         return toUpdate;
     }
 
-    public async updateAdapterStates(adapter: AdapterInstance, toUpdate: Map<string, StateToUpdate>): Promise<number> {
-        for(const updateEntry of Object.values(toUpdate)) {
-            if (updateEntry.value !== null) {
-                await adapter.setStateAsync(updateEntry.id, {val: updateEntry.value, ack: true});
-                if (updateEntry.postUpdateHook) {
-                    await updateEntry.postUpdateHook(adapter, updateEntry.value);
-                }
-                adapter.log.silly(`Fetched value ${updateEntry.id}, val=[${updateEntry.value}]`);
-            }
-        }
-        return Promise.resolve(toUpdate.size);
-    }
+    // public async updateAdapterStates(adapter: AdapterInstance, toUpdate: Map<string, StateToUpdate>): Promise<number> {
+    // }
 }

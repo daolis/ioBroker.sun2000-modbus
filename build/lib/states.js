@@ -211,10 +211,10 @@ class InverterStates {
       {
         interval: 0 /* HIGH */,
         hookFn: (adapter, toUpdate) => {
-          const powerFromGrid = toUpdate.get("grid.reverseActivePower");
+          const powerFromGrid = toUpdate.get("grid.supplyFrom");
           const powerActiveInverter = toUpdate.get("activePower");
           const totalPowerUse = (powerFromGrid == null ? void 0 : powerFromGrid.value) + (powerActiveInverter == null ? void 0 : powerActiveInverter.value);
-          adapter.log.silly(`PostFetchHook: calculate totalPowerUse ${powerFromGrid}, ${powerActiveInverter}, ${totalPowerUse}`);
+          adapter.log.silly(`PostFetchHook: calculate totalPowerUse ${powerFromGrid == null ? void 0 : powerFromGrid.value}, ${powerActiveInverter == null ? void 0 : powerActiveInverter.value}, ${totalPowerUse}`);
           const result = /* @__PURE__ */ new Map();
           if (totalPowerUse) {
             result.set("totalPowerUse", { id: "totalPowerUse", value: totalPowerUse });
@@ -243,7 +243,7 @@ class InverterStates {
     }
   }
   async updateStates(adapter, device, interval) {
-    let toUpdate = /* @__PURE__ */ new Map();
+    const toUpdate = /* @__PURE__ */ new Map();
     for (const field of this.dataFields) {
       if (field.interval != interval) {
         continue;
@@ -262,8 +262,17 @@ class InverterStates {
         break;
       }
     }
-    toUpdate = this.runPostFetchHooks(adapter, toUpdate, interval);
-    return this.updateAdapterStates(adapter, toUpdate);
+    for (const updateEntry of toUpdate.values()) {
+      adapter.log.debug(`Update value ${updateEntry.id}, val=[${updateEntry.value}]`);
+      if (updateEntry.value !== null) {
+        await adapter.setStateAsync(updateEntry.id, { val: updateEntry.value, ack: true });
+        if (updateEntry.postUpdateHook) {
+          await updateEntry.postUpdateHook(adapter, updateEntry.value);
+        }
+        adapter.log.silly(`Fetched value ${updateEntry.id}, val=[${updateEntry.value}]`);
+      }
+    }
+    return Promise.resolve(toUpdate.size);
   }
   runPostFetchHooks(adapter, toUpdate, interval) {
     for (const postFetchHook of this.postFetchUpdateHooks) {
@@ -275,18 +284,6 @@ class InverterStates {
       }
     }
     return toUpdate;
-  }
-  async updateAdapterStates(adapter, toUpdate) {
-    for (const updateEntry of Object.values(toUpdate)) {
-      if (updateEntry.value !== null) {
-        await adapter.setStateAsync(updateEntry.id, { val: updateEntry.value, ack: true });
-        if (updateEntry.postUpdateHook) {
-          await updateEntry.postUpdateHook(adapter, updateEntry.value);
-        }
-        adapter.log.silly(`Fetched value ${updateEntry.id}, val=[${updateEntry.value}]`);
-      }
-    }
-    return Promise.resolve(toUpdate.size);
   }
 }
 // Annotate the CommonJS export names for ESM import in node:
