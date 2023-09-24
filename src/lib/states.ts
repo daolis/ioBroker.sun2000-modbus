@@ -307,7 +307,7 @@ export class InverterStates {
                 break;
             }
         }
-        toUpdate = this.runPostFetchHooks(adapter, toUpdate, interval);
+        //toUpdate = this.runPostFetchHooks(adapter, toUpdate, interval);
 
         return this.updateAdapterStates(adapter, toUpdate);
     }
