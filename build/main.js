@@ -59,7 +59,7 @@ class Sun2000Modbus extends utils.Adapter {
       return Promise.resolve(countHigh + countLow);
     });
     this.scheduler.init();
-    this.log.info("Start syncing data from inverter");
+    this.log.info("Start fetching data from inverter");
     await this.runSync();
     await this.runWatchDog();
   }

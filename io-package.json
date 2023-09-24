@@ -291,6 +291,21 @@
             }
         },
         {
+            "_id": "totalPowerUse",
+            "type": "state",
+            "common": {
+                "name": {
+                  "en": "Total power use",
+                  "de": "Gesamtverbrauch"
+                },
+                "role": "value",
+                "read": true,
+                "write": false,
+                "desc": "Total power use"
+            },
+            "native": {}
+        },
+        {
             "_id": "storage",
             "type": "channel",
             "common": {

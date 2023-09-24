@@ -5,6 +5,7 @@ import {ModbusDevice} from './modbus/modbus_device';
 
 type MapperFn = (value: any) => Promise<any>
 type PostUpdateHookFn = (adapter: AdapterInstance, value: any) => Promise<void>
+type PostFetchUpdateHookFn = (adapter: AdapterInstance, toUpdate: Map<string, StateToUpdate>) => Map<string, StateToUpdate>
 
 interface DataField {
     interval?: UpdateIntervalID;
@@ -45,14 +46,20 @@ interface UpdateIntervals {
     intervals: number[];
 }
 
+interface PostFetchUpdateHook {
+    interval: UpdateIntervalID;
+    hookFn: PostFetchUpdateHookFn;
+}
+
 export class InverterStates {
 
     private updateIntervals: UpdateIntervals
     private readonly dataFields: DataField[];
+    private readonly postFetchUpdateHooks: PostFetchUpdateHook[];
     // private changingFields: DataField[];
 
     constructor(updateIntervals: UpdateIntervals) {
-        this.updateIntervals = updateIntervals
+        this.updateIntervals = updateIntervals;
         this.dataFields = [
             // initial fields - no repetitive update
             {
@@ -241,6 +248,22 @@ export class InverterStates {
                 register: {reg: 37121, type: ModbusDatatype.int32, length: 2, gain: 100},
             },
         ];
+        this.postFetchUpdateHooks = [
+            {
+                interval: UpdateIntervalID.HIGH,
+                hookFn: (adapter: AdapterInstance, toUpdate: Map<string, StateToUpdate>) => {
+                    const powerFromGrid = toUpdate.get('grid.reverseActivePower');
+                    const powerActiveInverter = toUpdate.get('activePower');
+                    const totalPowerUse = powerFromGrid?.value + powerActiveInverter?.value;
+                    adapter.log.silly(`PostFetchHook: calculate totalPowerUse ${powerFromGrid}, ${powerActiveInverter}, ${totalPowerUse}`);
+                    const result = new Map();
+                    if (totalPowerUse) {
+                        result.set('totalPowerUse', {id: 'totalPowerUse', value: totalPowerUse})
+                    }
+                    return result;
+                }
+            }
+        ];
     }
 
     public async createStates(adapter: AdapterInstance): Promise<void> {
@@ -264,7 +287,7 @@ export class InverterStates {
 
 
     public async updateStates(adapter: AdapterInstance, device: ModbusDevice, interval?: UpdateIntervalID): Promise<number> {
-        const toUpdate: StateToUpdate[] = [];
+        let toUpdate = new Map<string, StateToUpdate>;
         for (const field of this.dataFields) {
             if (field.interval != interval) {
                 continue;
@@ -278,22 +301,39 @@ export class InverterStates {
                 if (field.mapper) {
                     value = await field.mapper(value);
                 }
-                toUpdate.push({id: field.state.id, value: value, postUpdateHook: field.postUpdateHook});
+                toUpdate.set(field.state.id, {id: field.state.id, value: value, postUpdateHook: field.postUpdateHook})
             } catch (e) {
                 adapter.log.warn(`Error while reading from ${device.getIpAddress()}: [${field.register.reg}|${field.register.length}] '' with : ${e}`);
                 break;
             }
         }
+        toUpdate = this.runPostFetchHooks(adapter, toUpdate, interval);
 
-        for (const stateToUpdate of toUpdate) {
-            if (stateToUpdate.value !== null) {
-                await adapter.setStateAsync(stateToUpdate.id, {val: stateToUpdate.value, ack: true});
-                if (stateToUpdate.postUpdateHook) {
-                    await stateToUpdate.postUpdateHook(adapter, stateToUpdate.value);
+        return this.updateAdapterStates(adapter, toUpdate);
+    }
+
+    public runPostFetchHooks(adapter: AdapterInstance, toUpdate: Map<string, StateToUpdate>, interval: UpdateIntervalID | undefined): Map<string, StateToUpdate> {
+        for (const postFetchHook of this.postFetchUpdateHooks) {
+            if (postFetchHook.interval == interval) {
+                const hookUpdates = postFetchHook.hookFn(adapter, toUpdate);
+                for (const entry of hookUpdates.entries()) {
+                    toUpdate.set(entry[0], entry[1]);
                 }
-                adapter.log.silly(`Synced value ${stateToUpdate.id}, val=[${stateToUpdate.value}]`);
             }
         }
-        return Promise.resolve(toUpdate.length);
+        return toUpdate;
+    }
+
+    public async updateAdapterStates(adapter: AdapterInstance, toUpdate: Map<string, StateToUpdate>): Promise<number> {
+        for(const updateEntry of Object.values(toUpdate)) {
+            if (updateEntry.value !== null) {
+                await adapter.setStateAsync(updateEntry.id, {val: updateEntry.value, ack: true});
+                if (updateEntry.postUpdateHook) {
+                    await updateEntry.postUpdateHook(adapter, updateEntry.value);
+                }
+                adapter.log.silly(`Fetched value ${updateEntry.id}, val=[${updateEntry.value}]`);
+            }
+        }
+        return Promise.resolve(toUpdate.size);
     }
 }
