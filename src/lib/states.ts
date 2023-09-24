@@ -252,10 +252,10 @@ export class InverterStates {
             {
                 interval: UpdateIntervalID.HIGH,
                 hookFn: (adapter: AdapterInstance, toUpdate: Map<string, StateToUpdate>) => {
-                    const powerFromGrid = toUpdate.get('grid.reverseActivePower');
+                    const powerFromGrid = toUpdate.get('grid.supplyFrom');
                     const powerActiveInverter = toUpdate.get('activePower');
                     const totalPowerUse = powerFromGrid?.value + powerActiveInverter?.value;
-                    adapter.log.silly(`PostFetchHook: calculate totalPowerUse ${powerFromGrid}, ${powerActiveInverter}, ${totalPowerUse}`);
+                    adapter.log.silly(`PostFetchHook: calculate totalPowerUse ${powerFromGrid?.value}, ${powerActiveInverter?.value}, ${totalPowerUse}`);
                     const result = new Map();
                     if (totalPowerUse) {
                         result.set('totalPowerUse', {id: 'totalPowerUse', value: totalPowerUse})
