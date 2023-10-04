@@ -299,6 +299,7 @@
                   "de": "Gesamtverbrauch"
                 },
                 "role": "value",
+                "type": "number",
                 "unit":  "W",
                 "read": true,
                 "write": false,
