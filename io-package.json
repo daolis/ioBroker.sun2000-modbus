@@ -1,423 +1,423 @@
 {
-    "common": {
-        "name": "sun2000-modbus",
-        "version": "0.0.0",
-        "news": {
-            "0.0.1": {
-                "en": "initial release",
-                "de": "Erstveröffentlichung",
-                "ru": "Начальная версия",
-                "pt": "lançamento inicial",
-                "nl": "Eerste uitgave",
-                "fr": "Première version",
-                "it": "Versione iniziale",
-                "es": "Versión inicial",
-                "pl": "Pierwsze wydanie",
-                "uk": "Початкова версія",
-                "zh-cn": "首次出版"
-            }
-        },
-        "titleLang": {
-            "en": "Huawei Sun2000 inverter",
-            "de": "Huawei Sun2000 inverter",
-            "ru": "Huawei Sun2000 inverter",
-            "pt": "Huawei Sun2000 inverter",
-            "nl": "Huawei Sun2000 inverter",
-            "fr": "Huawei Sun2000 inverter",
-            "it": "Huawei Sun2000 inverter",
-            "es": "Huawei Sun2000 inverter",
-            "pl": "Huawei Sun2000 inverter",
-            "uk": "Huawei Sun2000 inverter",
-            "zh-cn": "Huawei Sun2000 inverter"
-        },
-        "desc": {
-            "en": "Connect to Huawei Sun2000 inverter with Modbus TCP",
-            "de": "Stellen Sie über Modbus TCP eine Verbindung zum Huawei Sun2000-Wechselrichter her",
-            "ru": "Подключение к инвертору Huawei Sun2000 с помощью Modbus TCP",
-            "pt": "Conecte ao inversor Huawei Sun2000 com Modbus TCP",
-            "nl": "Maak verbinding met de Huawei Sun2000-omvormer met Modbus TCP",
-            "fr": "Connectez-vous à l'onduleur Huawei Sun2000 avec Modbus TCP",
-            "it": "Connettiti all'inverter Huawei Sun2000 con Modbus TCP",
-            "es": "Conéctese al inversor Huawei Sun2000 con Modbus TCP",
-            "pl": "Połącz się z falownikiem Huawei Sun2000 za pomocą protokołu Modbus TCP",
-            "uk": "Підключіться до інвертора Huawei Sun2000 за допомогою Modbus TCP",
-            "zh-cn": "通过Modbus TCP连接华为Sun2000逆变器"
-        },
-        "authors": [
-            "daolis <stephan.bechter@gmail.com>"
-        ],
-        "keywords": [
-            "inverter",
-            "huawei",
-            "modbus",
-            "luna2000",
-            "sun2000"
-        ],
-        "license": "MIT",
-        "platform": "Javascript/Node.js",
-        "main": "build/main.js",
-        "icon": "sun2000-modbus.png",
-        "enabled": true,
-        "extIcon": "https://raw.githubusercontent.com/daolis/ioBroker.sun2000-modbus/main/admin/sun2000-modbus.png",
-        "readme": "https://github.com/daolis/ioBroker.sun2000-modbus/blob/main/README.md",
-        "loglevel": "info",
-        "mode": "daemon",
-        "type": "energy",
-        "compact": true,
-        "connectionType": "local",
-        "dataSource": "poll",
-        "adminUI": {
-            "config": "json"
-        },
-        "dependencies": [
-            {
-                "js-controller": ">=3.3.22"
-            }
-        ],
-        "globalDependencies": [
-            {
-                "admin": ">=5.1.13"
-            }
-        ],
-        "adminColumns": [
-            {
-                "name": {
-                    "en": "Inverter Address",
-                    "de": "Wechselrichter Adresse"
-                },
-                "path": "native.address",
-                "width": 500,
-                "align": "left"
-            },
-            {
-                "name": {
-                    "en": "Port",
-                    "de": "Port"
-                },
-                "path": "native.port",
-                "width": 100,
-                "align": "left"
-            },
-            {
-                "name": {
-                    "en": "Modbus unitID",
-                    "de": "Modbus unitID"
-                },
-                "path": "native.modbusUnitId",
-                "width": 100,
-                "align": "left"
-            },
-            {
-                "name": {
-                    "en": "Update interval fast",
-                    "de": "Update Intervall Schnell"
-                },
-                "path": "native.updateIntervalHigh",
-                "width": 100,
-                "align": "left"
-            }
-        ],
-        "plugins": {
-            "sentry": {
-                "dsn": "https://37d37e6a0b134349fc81d3aac954c30b@o123466.ingest.sentry.io/4505792569868288"
-            }
-        }
+  "common": {
+    "name": "sun2000-modbus",
+    "version": "0.0.1",
+    "news": {
+      "0.0.1": {
+        "en": "initial release",
+        "de": "Erstveröffentlichung",
+        "ru": "Начальная версия",
+        "pt": "lançamento inicial",
+        "nl": "Eerste uitgave",
+        "fr": "Première version",
+        "it": "Versione iniziale",
+        "es": "Versión inicial",
+        "pl": "Pierwsze wydanie",
+        "uk": "Початкова версія",
+        "zh-cn": "首次出版"
+      }
     },
-    "native": {
-        "address": "10.1.3.20",
-        "port": 502,
-        "modbusUnitId": 1,
-        "updateIntervalHigh": 5,
-        "updateIntervalLow": 20
+    "titleLang": {
+      "en": "Huawei Sun2000 inverter",
+      "de": "Huawei Sun2000 inverter",
+      "ru": "Huawei Sun2000 inverter",
+      "pt": "Huawei Sun2000 inverter",
+      "nl": "Huawei Sun2000 inverter",
+      "fr": "Huawei Sun2000 inverter",
+      "it": "Huawei Sun2000 inverter",
+      "es": "Huawei Sun2000 inverter",
+      "pl": "Huawei Sun2000 inverter",
+      "uk": "Huawei Sun2000 inverter",
+      "zh-cn": "Huawei Sun2000 inverter"
     },
-    "objects": [],
-    "instanceObjects": [
-        {
-            "_id": "info",
-            "type": "channel",
-            "common": {
-                "name": {
-                  "en": "Information",
-                  "de": "Informationen",
-                  "ru": "Информация",
-                  "pt": "Informação",
-                  "nl": "Informatie",
-                  "fr": "Information",
-                  "it": "Informazioni",
-                  "es": "Información",
-                  "pl": "Informacja",
-                  "uk": "Інформація",
-                  "zh-cn": "信息"
-                },
-                "role": "info"
-            },
-            "native": {}
+    "desc": {
+      "en": "Connect to Huawei Sun2000 inverter with Modbus TCP",
+      "de": "Stellen Sie über Modbus TCP eine Verbindung zum Huawei Sun2000-Wechselrichter her",
+      "ru": "Подключение к инвертору Huawei Sun2000 с помощью Modbus TCP",
+      "pt": "Conecte ao inversor Huawei Sun2000 com Modbus TCP",
+      "nl": "Maak verbinding met de Huawei Sun2000-omvormer met Modbus TCP",
+      "fr": "Connectez-vous à l'onduleur Huawei Sun2000 avec Modbus TCP",
+      "it": "Connettiti all'inverter Huawei Sun2000 con Modbus TCP",
+      "es": "Conéctese al inversor Huawei Sun2000 con Modbus TCP",
+      "pl": "Połącz się z falownikiem Huawei Sun2000 za pomocą protokołu Modbus TCP",
+      "uk": "Підключіться до інвертора Huawei Sun2000 за допомогою Modbus TCP",
+      "zh-cn": "通过Modbus TCP连接华为Sun2000逆变器"
+    },
+    "authors": [
+      "daolis <stephan.bechter@gmail.com>"
+    ],
+    "keywords": [
+      "inverter",
+      "huawei",
+      "modbus",
+      "luna2000",
+      "sun2000"
+    ],
+    "license": "MIT",
+    "platform": "Javascript/Node.js",
+    "main": "build/main.js",
+    "icon": "sun2000-modbus.png",
+    "enabled": true,
+    "extIcon": "https://raw.githubusercontent.com/daolis/ioBroker.sun2000-modbus/main/admin/sun2000-modbus.png",
+    "readme": "https://github.com/daolis/ioBroker.sun2000-modbus/blob/main/README.md",
+    "loglevel": "info",
+    "mode": "daemon",
+    "type": "energy",
+    "compact": true,
+    "connectionType": "local",
+    "dataSource": "poll",
+    "adminUI": {
+      "config": "json"
+    },
+    "dependencies": [
+      {
+        "js-controller": ">=3.3.22"
+      }
+    ],
+    "globalDependencies": [
+      {
+        "admin": ">=5.1.13"
+      }
+    ],
+    "adminColumns": [
+      {
+        "name": {
+          "en": "Inverter Address",
+          "de": "Wechselrichter Adresse"
         },
-        {
-            "_id": "info.connection",
-            "type": "state",
-            "common": {
-                "name": {
-                  "en": "Inverter connected",
-                  "de": "Wechselrichter angeschlossen",
-                  "ru": "Инвертор подключен",
-                  "pt": "Inverter conectado",
-                  "nl": "Vertaling:",
-                  "fr": "Inverter connecté",
-                  "it": "Inverter collegato",
-                  "es": "Inverter conectado",
-                  "pl": "Inverter connected",
-                  "uk": "Інвертор підключений",
-                  "zh-cn": "1. 通 息"
-                },
-                "type": "boolean",
-                "role": "indicator.connected",
-                "read": true,
-                "write": false,
-                "desc": "Is the inverter connected?"
-            }
+        "path": "native.address",
+        "width": 500,
+        "align": "left"
+      },
+      {
+        "name": {
+          "en": "Port",
+          "de": "Port"
         },
-        {
-            "_id": "info.ip",
-            "type": "state",
-            "common": {
-                "name": {
-                  "en": "Inverter IP",
-                  "de": "Inverter IP",
-                  "ru": "Инвертор IP",
-                  "pt": "IP do inversor",
-                  "nl": "IP",
-                  "fr": "Inverter IP",
-                  "it": "Inverter IP",
-                  "es": "Inverter IP",
-                  "pl": "Inverter IP",
-                  "uk": "Інвертор IP",
-                  "zh-cn": "目标"
-                },
-                "type": "string",
-                "role": "indicator.ip",
-                "read": true,
-                "write": false,
-                "desc": "Inverter IP address"
-            }
+        "path": "native.port",
+        "width": 100,
+        "align": "left"
+      },
+      {
+        "name": {
+          "en": "Modbus unitID",
+          "de": "Modbus unitID"
         },
-        {
-            "_id": "info.port",
-            "type": "state",
-            "common": {
-                "name": {
-                  "en": "Modbus port",
-                  "de": "Modbusport",
-                  "ru": "Порт Modbus",
-                  "pt": "Porta Modbus",
-                  "nl": "Modbus haven",
-                  "fr": "Port de Modbus",
-                  "it": "Porta Modbus",
-                  "es": "Puerto de Modbus",
-                  "pl": "Port",
-                  "uk": "Портфоліо Modbus",
-                  "zh-cn": "蒙德港"
-                },
-                "type": "number",
-                "role": "indicator.port",
-                "read": true,
-                "write": false,
-                "desc": "Inverter modbus port"
-            }
+        "path": "native.modbusUnitId",
+        "width": 100,
+        "align": "left"
+      },
+      {
+        "name": {
+          "en": "Update interval fast",
+          "de": "Update Intervall Schnell"
         },
-        {
-            "_id": "info.unitID",
-            "type": "state",
-            "common": {
-                "name": {
-                  "en": "Modbus unit ID",
-                  "de": "Modbus unit ID"
-                },
-                "type": "number",
-                "role": "indicator.id",
-                "read": true,
-                "write": false,
-                "desc": "Inverter modbus unit id"
-            }
+        "path": "native.updateIntervalHigh",
+        "width": 100,
+        "align": "left"
+      }
+    ],
+    "plugins": {
+      "sentry": {
+        "dsn": "https://37d37e6a0b134349fc81d3aac954c30b@o123466.ingest.sentry.io/4505792569868288"
+      }
+    }
+  },
+  "native": {
+    "address": "10.1.3.20",
+    "port": 502,
+    "modbusUnitId": 1,
+    "updateIntervalHigh": 5,
+    "updateIntervalLow": 20
+  },
+  "objects": [],
+  "instanceObjects": [
+    {
+      "_id": "info",
+      "type": "channel",
+      "common": {
+        "name": {
+          "en": "Information",
+          "de": "Informationen",
+          "ru": "Информация",
+          "pt": "Informação",
+          "nl": "Informatie",
+          "fr": "Information",
+          "it": "Informazioni",
+          "es": "Información",
+          "pl": "Informacja",
+          "uk": "Інформація",
+          "zh-cn": "信息"
         },
-        {
-            "_id": "info.modbusUpdateIntervalHigh",
-            "type": "state",
-            "common": {
-                "name": {
-                  "en": "High modbus update interval",
-                  "de": "High modbus Update Intervall",
-                  "ru": "Высокий интервал обновления модбусов",
-                  "pt": "Intervalo de atualização do modbus",
-                  "nl": "High Modbus update interval",
-                  "fr": "Intervalle de mise à jour de modbus",
-                  "it": "Alta frequenza di aggiornamento modbus",
-                  "es": "Intervalo de actualización de modbuses altos",
-                  "pl": "High modbus",
-                  "uk": "Високий інтервал оновлення модуля",
-                  "zh-cn": "A. 高压图"
-                },
-                "type": "number",
-                "role": "value",
-                "read": true,
-                "write": true,
-                "desc": "High inverter modbus update interval",
-                "unit": "sec"
-            }
+        "role": "info"
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.connection",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Inverter connected",
+          "de": "Wechselrichter angeschlossen",
+          "ru": "Инвертор подключен",
+          "pt": "Inverter conectado",
+          "nl": "Vertaling:",
+          "fr": "Inverter connecté",
+          "it": "Inverter collegato",
+          "es": "Inverter conectado",
+          "pl": "Inverter connected",
+          "uk": "Інвертор підключений",
+          "zh-cn": "1. 通 息"
         },
-        {
-            "_id": "info.modbusUpdateIntervalLow",
-            "type": "state",
-            "common": {
-                "name": {
-                  "en": "Low modbus update interval",
-                  "de": "Low Modbus Update Intervall",
-                  "ru": "Низкий интервал обновления модбусов",
-                  "pt": "Baixo intervalo de atualização do modbus",
-                  "nl": "Law modbus update",
-                  "fr": "Intervalle de mise à jour de modbus",
-                  "it": "Intervallo di aggiornamento modbus basso",
-                  "es": "Intervalo de actualización bajo modbus",
-                  "pl": "Niska wersja interwału",
-                  "uk": "Низький інтервал оновлення модуля",
-                  "zh-cn": "A. 低土壤更新"
-                },
-                "type": "number",
-                "role": "value",
-                "read": true,
-                "write": true,
-                "desc": "Low inverter modbus update interval",
-                "unit": "sec"
-            }
+        "type": "boolean",
+        "role": "indicator.connected",
+        "read": true,
+        "write": false,
+        "desc": "Is the inverter connected?"
+      }
+    },
+    {
+      "_id": "info.ip",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Inverter IP",
+          "de": "Inverter IP",
+          "ru": "Инвертор IP",
+          "pt": "IP do inversor",
+          "nl": "IP",
+          "fr": "Inverter IP",
+          "it": "Inverter IP",
+          "es": "Inverter IP",
+          "pl": "Inverter IP",
+          "uk": "Інвертор IP",
+          "zh-cn": "目标"
         },
-        {
-            "_id": "totalPowerUse",
-            "type": "state",
-            "common": {
-                "name": {
-                  "en": "Total power use",
-                  "de": "Gesamtverbrauch"
-                },
-                "role": "value",
-                "type": "number",
-                "unit":  "W",
-                "read": true,
-                "write": false,
-                "desc": "Total power use ('inputPower' + 'grid.supplyFrom')"
-            },
-            "native": {}
+        "type": "string",
+        "role": "indicator.ip",
+        "read": true,
+        "write": false,
+        "desc": "Inverter IP address"
+      }
+    },
+    {
+      "_id": "info.port",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Modbus port",
+          "de": "Modbusport",
+          "ru": "Порт Modbus",
+          "pt": "Porta Modbus",
+          "nl": "Modbus haven",
+          "fr": "Port de Modbus",
+          "it": "Porta Modbus",
+          "es": "Puerto de Modbus",
+          "pl": "Port",
+          "uk": "Портфоліо Modbus",
+          "zh-cn": "蒙德港"
         },
-        {
-            "_id": "storage",
-            "type": "channel",
-            "common": {
-                "name": {
-                  "en": "Storage data",
-                  "de": "Akku daten",
-                  "ru": "Данные хранения",
-                  "pt": "Dados de armazenamento",
-                  "nl": "Vertaling:",
-                  "fr": "Données de stockage",
-                  "it": "Dati di archiviazione",
-                  "es": "Datos de almacenamiento",
-                  "pl": "Storage data",
-                  "uk": "Дані зберігання",
-                  "zh-cn": "储存数据"
-                },
-                "role": "info",
-                "read": true,
-                "write": false,
-                "desc": "Storage 'realtime' data"
-            },
-            "native": {}
+        "type": "number",
+        "role": "indicator.port",
+        "read": true,
+        "write": false,
+        "desc": "Inverter modbus port"
+      }
+    },
+    {
+      "_id": "info.unitID",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Modbus unit ID",
+          "de": "Modbus unit ID"
         },
-        {
-            "_id": "storage.chargePower",
-            "type": "state",
-            "common": {
-                "name": {
-                  "en": "Charge power",
-                  "de": "Leistung laden"
-                },
-                "type":"number",
-                "unit": "W",
-                "role": "value",
-                "read": true,
-                "write": false,
-                "desc": "Calculated: Only 0 and positive values from chargeDischargePower"
-            },
-            "native": {}
+        "type": "number",
+        "role": "indicator.id",
+        "read": true,
+        "write": false,
+        "desc": "Inverter modbus unit id"
+      }
+    },
+    {
+      "_id": "info.modbusUpdateIntervalHigh",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "High modbus update interval",
+          "de": "High modbus Update Intervall",
+          "ru": "Высокий интервал обновления модбусов",
+          "pt": "Intervalo de atualização do modbus",
+          "nl": "High Modbus update interval",
+          "fr": "Intervalle de mise à jour de modbus",
+          "it": "Alta frequenza di aggiornamento modbus",
+          "es": "Intervalo de actualización de modbuses altos",
+          "pl": "High modbus",
+          "uk": "Високий інтервал оновлення модуля",
+          "zh-cn": "A. 高压图"
         },
-        {
-            "_id": "storage.dischargePower",
-            "type": "state",
-            "common": {
-                "name": {
-                  "en": "Discharge power",
-                  "de": "Leistung entladen"
-                },
-                "type":"number",
-                "unit": "W",
-                "role": "value",
-                "read": true,
-                "write": false,
-                "desc": "Calculated: Only 0 and negative values from chargeDischargePower"
-            },
-            "native": {}
+        "type": "number",
+        "role": "value",
+        "read": true,
+        "write": true,
+        "desc": "High inverter modbus update interval",
+        "unit": "sec"
+      }
+    },
+    {
+      "_id": "info.modbusUpdateIntervalLow",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Low modbus update interval",
+          "de": "Low Modbus Update Intervall",
+          "ru": "Низкий интервал обновления модбусов",
+          "pt": "Baixo intervalo de atualização do modbus",
+          "nl": "Law modbus update",
+          "fr": "Intervalle de mise à jour de modbus",
+          "it": "Intervallo di aggiornamento modbus basso",
+          "es": "Intervalo de actualización bajo modbus",
+          "pl": "Niska wersja interwału",
+          "uk": "Низький інтервал оновлення модуля",
+          "zh-cn": "A. 低土壤更新"
         },
-        {
-            "_id": "grid",
-            "type": "channel",
-            "common": {
-                "name": {
-                  "en": "Grid",
-                  "de": "Netz",
-                  "ru": "Грид",
-                  "pt": "Grade",
-                  "nl": "Grid",
-                  "fr": "Grid",
-                  "it": "Griglia",
-                  "es": "Grid",
-                  "pl": "Grid",
-                  "uk": "Сітка",
-                  "zh-cn": "Grid"
-                }
-            },
-            "native": {}
+        "type": "number",
+        "role": "value",
+        "read": true,
+        "write": true,
+        "desc": "Low inverter modbus update interval",
+        "unit": "sec"
+      }
+    },
+    {
+      "_id": "totalPowerUse",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Total power use",
+          "de": "Gesamtverbrauch"
         },
-        {
-            "_id": "grid.feedIn",
-            "type": "state",
-            "common": {
-                "name": {
-                  "en": "Feed-In power",
-                  "de": "Leistung Einspeisung"
-                },
-                "type":"number",
-                "unit": "W",
-                "role": "value",
-                "read": true,
-                "write": false,
-                "desc": "Calculated: Only 0 and positive values from grid.activePower"
-            },
-            "native": {}
+        "role": "value",
+        "type": "number",
+        "unit": "W",
+        "read": true,
+        "write": false,
+        "desc": "Total power use ('inputPower' + 'grid.supplyFrom')"
+      },
+      "native": {}
+    },
+    {
+      "_id": "storage",
+      "type": "channel",
+      "common": {
+        "name": {
+          "en": "Storage data",
+          "de": "Akku daten",
+          "ru": "Данные хранения",
+          "pt": "Dados de armazenamento",
+          "nl": "Vertaling:",
+          "fr": "Données de stockage",
+          "it": "Dati di archiviazione",
+          "es": "Datos de almacenamiento",
+          "pl": "Storage data",
+          "uk": "Дані зберігання",
+          "zh-cn": "储存数据"
         },
-        {
-            "_id": "grid.supplyFrom",
-            "type": "state",
-            "common": {
-                "name": {
-                  "en": "Power supply from grid",
-                  "de": "Leistung Versorgung vom Netz"
-                },
-                "type":"number",
-                "unit": "W",
-                "role": "value",
-                "read": true,
-                "write": false,
-                "desc": "Calculated: Only 0 and negative values from grid.activePower"
-            },
-            "native": {}
+        "role": "info",
+        "read": true,
+        "write": false,
+        "desc": "Storage 'realtime' data"
+      },
+      "native": {}
+    },
+    {
+      "_id": "storage.chargePower",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Charge power",
+          "de": "Leistung laden"
+        },
+        "type": "number",
+        "unit": "W",
+        "role": "value",
+        "read": true,
+        "write": false,
+        "desc": "Calculated: Only 0 and positive values from chargeDischargePower"
+      },
+      "native": {}
+    },
+    {
+      "_id": "storage.dischargePower",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Discharge power",
+          "de": "Leistung entladen"
+        },
+        "type": "number",
+        "unit": "W",
+        "role": "value",
+        "read": true,
+        "write": false,
+        "desc": "Calculated: Only 0 and negative values from chargeDischargePower"
+      },
+      "native": {}
+    },
+    {
+      "_id": "grid",
+      "type": "channel",
+      "common": {
+        "name": {
+          "en": "Grid",
+          "de": "Netz",
+          "ru": "Грид",
+          "pt": "Grade",
+          "nl": "Grid",
+          "fr": "Grid",
+          "it": "Griglia",
+          "es": "Grid",
+          "pl": "Grid",
+          "uk": "Сітка",
+          "zh-cn": "Grid"
         }
-    ]
+      },
+      "native": {}
+    },
+    {
+      "_id": "grid.feedIn",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Feed-In power",
+          "de": "Leistung Einspeisung"
+        },
+        "type": "number",
+        "unit": "W",
+        "role": "value",
+        "read": true,
+        "write": false,
+        "desc": "Calculated: Only 0 and positive values from grid.activePower"
+      },
+      "native": {}
+    },
+    {
+      "_id": "grid.supplyFrom",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Power supply from grid",
+          "de": "Leistung Versorgung vom Netz"
+        },
+        "type": "number",
+        "unit": "W",
+        "role": "value",
+        "read": true,
+        "write": false,
+        "desc": "Calculated: Only 0 and negative values from grid.activePower"
+      },
+      "native": {}
+    }
+  ]
 }
