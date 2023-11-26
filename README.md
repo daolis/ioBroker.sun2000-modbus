@@ -29,8 +29,7 @@ Read data from Huawei SUN2000 inverter and LUNA2000 Storage using Modbus TCP.
 
 ## Changelog
 
-[//]: # (### **WORK IN PROGRESS**)
-### 0.0.1
+### **WORK IN PROGRESS**
 * (daolis) initial release
 
 ## License
