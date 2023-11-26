@@ -28,8 +28,7 @@ Read data from Huawei SUN2000 inverter and LUNA2000 Storage using Modbus TCP.
 * `updateIntervalLow`: Slower update interval (default: 20 sec)
 
 ## Changelog
-
-### **WORK IN PROGRESS**
+### 0.0.1 (2023-11-26)
 
 * (daolis) initial release
 
