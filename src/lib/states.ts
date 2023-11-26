@@ -61,7 +61,7 @@ export class InverterStates {
     constructor(updateIntervals: UpdateIntervals) {
         this.updateIntervals = updateIntervals;
         this.dataFields = [
-            // initial fields - no repetitive update
+            // initial fields (no interval set) - no repetitive update
             {
                 state: {id: 'info.model', name: 'Model', type: 'string', role: 'state'},
                 register: {reg: 30000, type: ModbusDatatype.string, length: 15}
@@ -111,7 +111,7 @@ export class InverterStates {
             },
             {
                 interval: UpdateIntervalID.LOW,
-                state: {id: 'deviceStaus', name: 'Device status', type: 'string', unit: '', role: 'value.status'},
+                state: {id: 'deviceStatus', name: 'Device status', type: 'string', unit: '', role: 'value.status'},
                 register: {reg: 32089, type: ModbusDatatype.uint16, length: 1},
                 mapper: value => Promise.resolve(InverterStatus[value])
             },
@@ -253,10 +253,10 @@ export class InverterStates {
             {
                 interval: UpdateIntervalID.HIGH,
                 hookFn: (adapter: AdapterInstance, toUpdate: Map<string, StateToUpdate>) => {
-                    const powerFromGrid = toUpdate.get('grid.supplyFrom');
+                    const powerGridActive = toUpdate.get('grid.activePower');
                     const powerActiveInverter = toUpdate.get('activePower');
-                    const totalPowerUse = powerFromGrid?.value + powerActiveInverter?.value;
-                    adapter.log.silly(`PostFetchHook: calculate totalPowerUse ${powerFromGrid?.value}, ${powerActiveInverter?.value}, ${totalPowerUse}`);
+                    const totalPowerUse = powerActiveInverter?.value - powerGridActive?.value;
+                    adapter.log.silly(`PostFetchHook: calculate totalPowerUse ${powerGridActive?.value}, ${powerActiveInverter?.value}, ${totalPowerUse}`);
                     const result = new Map();
                     if (totalPowerUse) {
                         result.set('totalPowerUse', {id: 'totalPowerUse', value: totalPowerUse})
