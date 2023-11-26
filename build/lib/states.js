@@ -80,7 +80,7 @@ class InverterStates {
       },
       {
         interval: 1 /* LOW */,
-        state: { id: "deviceStaus", name: "Device status", type: "string", unit: "", role: "value.status" },
+        state: { id: "deviceStatus", name: "Device status", type: "string", unit: "", role: "value.status" },
         register: { reg: 32089, type: import_modbus_types.ModbusDatatype.uint16, length: 1 },
         mapper: (value) => Promise.resolve(import_state_enums.InverterStatus[value])
       },
@@ -213,10 +213,10 @@ class InverterStates {
       {
         interval: 0 /* HIGH */,
         hookFn: (adapter, toUpdate) => {
-          const powerFromGrid = toUpdate.get("grid.supplyFrom");
+          const powerGridActive = toUpdate.get("grid.activePower");
           const powerActiveInverter = toUpdate.get("activePower");
-          const totalPowerUse = (powerFromGrid == null ? void 0 : powerFromGrid.value) + (powerActiveInverter == null ? void 0 : powerActiveInverter.value);
-          adapter.log.silly(`PostFetchHook: calculate totalPowerUse ${powerFromGrid == null ? void 0 : powerFromGrid.value}, ${powerActiveInverter == null ? void 0 : powerActiveInverter.value}, ${totalPowerUse}`);
+          const totalPowerUse = (powerActiveInverter == null ? void 0 : powerActiveInverter.value) - (powerGridActive == null ? void 0 : powerGridActive.value);
+          adapter.log.silly(`PostFetchHook: calculate totalPowerUse ${powerGridActive == null ? void 0 : powerGridActive.value}, ${powerActiveInverter == null ? void 0 : powerActiveInverter.value}, ${totalPowerUse}`);
           const result = /* @__PURE__ */ new Map();
           if (totalPowerUse) {
             result.set("totalPowerUse", { id: "totalPowerUse", value: totalPowerUse });
