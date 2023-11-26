@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "sun2000-modbus",
-        "version": "0.0.1",
+        "version": "0.0.0",
         "news": {
             "0.0.1": {
                 "en": "initial release",
