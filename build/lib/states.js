@@ -138,6 +138,16 @@ class InverterStates {
       },
       {
         interval: 1 /* LOW */,
+        state: { id: "storage.CurrentDayChargeCapacity", name: "CurrentDayChargeCapacity", type: "number", unit: "kWh", role: "value.power", desc: "TBD" },
+        register: { reg: 37015, type: import_modbus_types.ModbusDatatype.uint32, length: 2, gain: 100 }
+      },
+      {
+        interval: 1 /* LOW */,
+        state: { id: "storage.CurrentDayDischargeCapacity", name: "CurrentDayDischargeCapacity", type: "number", unit: "kWh", role: "value.power", desc: "TBD" },
+        register: { reg: 37786, type: import_modbus_types.ModbusDatatype.uint32, length: 2, gain: 100 }
+      },
+      {
+        interval: 1 /* LOW */,
         state: { id: "grid.meterStatus", name: "Meter status", type: "string", role: "value.status" },
         register: { reg: 37100, type: import_modbus_types.ModbusDatatype.uint16, length: 1 },
         mapper: (value) => Promise.resolve(import_state_enums.MeterStatus[value])
