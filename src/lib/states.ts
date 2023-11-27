@@ -83,6 +83,7 @@ export class InverterStates {
                 register: {reg: 30072, type: ModbusDatatype.uint16, length: 1, gain: 1}
             },
 
+            // ####################################################################################################################################
             // inverter
             {
                 interval: UpdateIntervalID.HIGH,
@@ -146,6 +147,7 @@ export class InverterStates {
                 register: {reg: 32019, type: ModbusDatatype.int16, length: 1, gain: 100}
             },
 
+            // ####################################################################################################################################
             // storage
             {
                 interval: UpdateIntervalID.LOW,
@@ -169,10 +171,18 @@ export class InverterStates {
                     ]));
                 }
             },
-            // <TODOO date="31.08.2023" author="Stephan Bechter">
-            // TODO: add Charge discharge capacity per day
-            // </TODOO>
+            {
+                interval: UpdateIntervalID.LOW,
+                state: { id: 'storage.CurrentDayChargeCapacity', name: 'CurrentDayChargeCapacity', type: 'number', unit: 'kWh', role: 'value.power', desc: 'TBD' },
+                register: { reg: 37015, type: ModbusDatatype.uint32, length: 2, gain: 100 }
+            },
+            {
+                interval: UpdateIntervalID.LOW,
+                state: { id: 'storage.CurrentDayDischargeCapacity', name: 'CurrentDayDischargeCapacity', type: 'number', unit: 'kWh', role: 'value.power', desc: 'TBD' },
+                register: { reg: 37786, type: ModbusDatatype.uint32, length: 2, gain: 100 }
+            },
 
+            // ####################################################################################################################################
             // grid (meter)
             {
                 interval: UpdateIntervalID.LOW,
