@@ -79,44 +79,6 @@
         "admin": ">=5.1.13"
       }
     ],
-    "adminColumns": [
-      {
-        "name": {
-          "en": "Inverter Address",
-          "de": "Wechselrichter Adresse"
-        },
-        "path": "native.address",
-        "width": 500,
-        "align": "left"
-      },
-      {
-        "name": {
-          "en": "Port",
-          "de": "Port"
-        },
-        "path": "native.port",
-        "width": 100,
-        "align": "left"
-      },
-      {
-        "name": {
-          "en": "Modbus unitID",
-          "de": "Modbus unitID"
-        },
-        "path": "native.modbusUnitId",
-        "width": 100,
-        "align": "left"
-      },
-      {
-        "name": {
-          "en": "Update interval fast",
-          "de": "Update Intervall Schnell"
-        },
-        "path": "native.updateIntervalHigh",
-        "width": 100,
-        "align": "left"
-      }
-    ],
     "plugins": {
       "sentry": {
         "dsn": "https://37d37e6a0b134349fc81d3aac954c30b@o123466.ingest.sentry.io/4505792569868288"
@@ -195,7 +157,7 @@
           "zh-cn": "目标"
         },
         "type": "string",
-        "role": "indicator.ip",
+        "role": "info.ip",
         "read": true,
         "write": false,
         "desc": "Inverter IP address"
@@ -219,7 +181,7 @@
           "zh-cn": "蒙德港"
         },
         "type": "number",
-        "role": "indicator.port",
+        "role": "info.port",
         "read": true,
         "write": false,
         "desc": "Inverter modbus port"
@@ -234,7 +196,7 @@
           "de": "Modbus unit ID"
         },
         "type": "number",
-        "role": "indicator.id",
+        "role": "value",
         "read": true,
         "write": false,
         "desc": "Inverter modbus unit id"
@@ -260,7 +222,7 @@
         "type": "number",
         "role": "value",
         "read": true,
-        "write": true,
+        "write": false,
         "desc": "High inverter modbus update interval",
         "unit": "sec"
       }
@@ -285,7 +247,7 @@
         "type": "number",
         "role": "value",
         "read": true,
-        "write": true,
+        "write": false,
         "desc": "Low inverter modbus update interval",
         "unit": "sec"
       }
@@ -298,7 +260,7 @@
           "en": "Total power use",
           "de": "Gesamtverbrauch"
         },
-        "role": "value",
+        "role": "value.power",
         "type": "number",
         "unit": "W",
         "read": true,
@@ -324,7 +286,6 @@
           "uk": "Дані зберігання",
           "zh-cn": "储存数据"
         },
-        "role": "info",
         "read": true,
         "write": false,
         "desc": "Storage 'realtime' data"
@@ -341,7 +302,7 @@
         },
         "type": "number",
         "unit": "W",
-        "role": "value",
+        "role": "value.power",
         "read": true,
         "write": false,
         "desc": "Calculated: Only 0 and positive values from chargeDischargePower"
@@ -358,7 +319,7 @@
         },
         "type": "number",
         "unit": "W",
-        "role": "value",
+        "role": "value.power",
         "read": true,
         "write": false,
         "desc": "Calculated: Only 0 and negative values from chargeDischargePower"
@@ -381,8 +342,10 @@
           "pl": "Grid",
           "uk": "Сітка",
           "zh-cn": "Grid"
-        }
+        },
+        "desc": "Grid data"
       },
+
       "native": {}
     },
     {
@@ -395,7 +358,7 @@
         },
         "type": "number",
         "unit": "W",
-        "role": "value",
+        "role": "value.power",
         "read": true,
         "write": false,
         "desc": "Calculated: Only 0 and positive values from grid.activePower"
@@ -412,7 +375,7 @@
         },
         "type": "number",
         "unit": "W",
-        "role": "value",
+        "role": "value.power",
         "read": true,
         "write": false,
         "desc": "Calculated: Only 0 and negative values from grid.activePower"

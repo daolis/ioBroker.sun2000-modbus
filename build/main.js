@@ -31,7 +31,6 @@ class Sun2000Modbus extends utils.Adapter {
     this.watchdogInterval = null;
     this.scheduler = new import_scheduler.Scheduler(this);
     this.on("ready", this.onReady.bind(this));
-    this.on("stateChange", this.onStateChange.bind(this));
     this.on("unload", this.onUnload.bind(this));
   }
   async onReady() {
