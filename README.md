@@ -34,6 +34,8 @@ see the [documentation page](./docs/README.md)
 
 * Added storage CurrentDayChargeCapacity and CurrentDayDischargeCapacity
 * Changes from [Add sun2000-modbus to latest](https://github.com/ioBroker/ioBroker.repositories/pull/3038)
+* Renamed stateOfCapacity to stateOfCharge\
+  Migration of historical data: see comment in [#26](https://github.com/daolis/ioBroker.sun2000-modbus/issues/26#issuecomment-1875627603)
 
 ### 0.0.1 (2023-11-26)
 
