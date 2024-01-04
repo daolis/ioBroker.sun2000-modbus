@@ -21,17 +21,14 @@ Read data from Huawei SUN2000 inverter and LUNA2000 Storage using Modbus TCP.
 
 Huawei products page: [solar.huawei.com](https://solar.huawei.com/at/professionals/all-products)
 
-## Settings
+## Documentation
 
-* `address`: Inverters IP address
-* `port`: Inverter modbus port (default: 502)
-* `modbusUnitId`: Modbus unit id (default: 1)
-* `updateIntervalHigh`: Fast update interval (default: 5 sec)
-* `updateIntervalLow`: Slower update interval (default: 20 sec)
-
+see the [documentation page](./docs/README.md)
 
 ## Changelog
 ### **WORK IN PROGRESS**
+* [#26](https://github.com/daolis/ioBroker.sun2000-modbus/issues/26) Renamed stateOfCapacity to stateOfCharge\
+  Migration of historical data: see [Migration of historical data (on state name change)](docs/migration.md)
 
 ### 0.0.2 (2024-01-08)
 

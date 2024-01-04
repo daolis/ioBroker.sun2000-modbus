@@ -122,7 +122,7 @@ class InverterStates {
       },
       {
         interval: 0 /* HIGH */,
-        state: { id: "storage.stateOfCapacity", name: "State of capacity", type: "number", unit: "%", role: "value.battery", desc: "SOC" },
+        state: { id: "storage.stateOfCharge", name: "State of charge", type: "number", unit: "%", role: "value.battery", desc: "SOC" },
         register: { reg: 37760, type: import_modbus_types.ModbusDatatype.uint16, length: 1, gain: 10 }
       },
       {
