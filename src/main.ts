@@ -27,7 +27,7 @@ class Sun2000Modbus extends utils.Adapter {
         });
         this.scheduler = new Scheduler(this);
         this.on('ready', this.onReady.bind(this));
-        this.on('stateChange', this.onStateChange.bind(this));
+        //this.on('stateChange', this.onStateChange.bind(this));
         this.on('unload', this.onUnload.bind(this));
     }
 
@@ -122,7 +122,8 @@ class Sun2000Modbus extends utils.Adapter {
     }
 
     /**
-     * Is called if a subscribed state changes
+     * Is called if a subscribed state changes.
+     * Not used yet. But will be used in future to set certain states.
      */
     private onStateChange(id: string, state: ioBroker.State | null | undefined): void {
         if (state) {

@@ -19,6 +19,8 @@ Sentry reporting is used starting with js-controller 3.0.
 
 Read data from Huawei SUN2000 inverter and LUNA2000 Storage using Modbus TCP.
 
+Huawei products page: [solar.huawei.com](https://solar.huawei.com/at/professionals/all-products)
+
 ## Settings
 
 * `address`: Inverters IP address
@@ -33,6 +35,7 @@ Read data from Huawei SUN2000 inverter and LUNA2000 Storage using Modbus TCP.
 ### **WORK IN PROGRESS**
 
 * Added storage CurrentDayChargeCapacity and CurrentDayDischargeCapacity
+* Changes from [Add sun2000-modbus to latest](https://github.com/ioBroker/ioBroker.repositories/pull/3038)
 
 ### 0.0.1 (2023-11-26)
 

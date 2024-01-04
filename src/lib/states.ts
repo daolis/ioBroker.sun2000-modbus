@@ -63,23 +63,23 @@ export class InverterStates {
         this.dataFields = [
             // initial fields (no interval set) - no repetitive update
             {
-                state: {id: 'info.model', name: 'Model', type: 'string', role: 'state'},
+                state: {id: 'info.model', name: 'Model', type: 'string', role: 'info.name'},
                 register: {reg: 30000, type: ModbusDatatype.string, length: 15}
             },
             {
-                state: {id: 'info.modelID', name: 'Model ID', type: 'number', role: 'state'},
+                state: {id: 'info.modelID', name: 'Model ID', type: 'number', role: 'info.hardware'},
                 register: {reg: 30070, type: ModbusDatatype.uint16, length: 1}
             },
             {
-                state: {id: 'info.serialNumber', name: 'Serial number', type: 'string', role: 'state'},
+                state: {id: 'info.serialNumber', name: 'Serial number', type: 'string', role: 'info.serial'},
                 register: {reg: 30015, type: ModbusDatatype.string, length: 10}
             },
             {
-                state: {id: 'info.ratedPower', name: 'Rated power', type: 'number', unit: 'W', role: 'state'},
+                state: {id: 'info.ratedPower', name: 'Rated power', type: 'number', unit: 'W', role: 'value.power'},
                 register: {reg: 30073, type: ModbusDatatype.int32, length: 2}
             },
             {
-                state: {id: 'info.numberMPPTrackers', name: 'Number of MPP trackers', type: 'number', unit: '', role: 'state'},
+                state: {id: 'info.numberMPPTrackers', name: 'Number of MPP trackers', type: 'number', unit: '', role: 'value'},
                 register: {reg: 30072, type: ModbusDatatype.uint16, length: 1, gain: 1}
             },
 
@@ -87,43 +87,43 @@ export class InverterStates {
             // inverter
             {
                 interval: UpdateIntervalID.HIGH,
-                state: {id: 'activePower', name: 'Active power', type: 'number', unit: 'W', role: 'value.power', desc: 'Power currently used'},
+                state: {id: 'activePower', name: 'Active power', type: 'number', unit: 'W', role: 'value.power.active', desc: 'Power currently used'},
                 register: {reg: 32080, type: ModbusDatatype.int32, length: 2}
             },
             {
                 interval: UpdateIntervalID.HIGH,
-                state: {id: 'inputPower', name: 'Input power', type: 'number', unit: 'W', role: 'value.power', desc: 'Power from PV'},
+                state: {id: 'inputPower', name: 'Input power', type: 'number', unit: 'W', role: 'value.power.produced', desc: 'Power from PV'},
                 register: {reg: 32064, type: ModbusDatatype.int32, length: 2}
             },
             {
                 interval: UpdateIntervalID.LOW,
-                state: {id: 'peakActivePowerCurrenDay', name: 'Peak active power of current day', type: 'number', unit: 'W', role: 'value.power.max'},
+                state: {id: 'peakActivePowerCurrenDay', name: 'Peak active power of current day', type: 'number', unit: 'W', role: 'value.power'},
                 register: {reg: 32078, type: ModbusDatatype.int32, length: 2}
             },
             {
                 interval: UpdateIntervalID.LOW,
-                state: {id: 'efficiency', name: 'Efficiency', type: 'number', unit: '%', role: 'value.efficiency'},
+                state: {id: 'efficiency', name: 'Efficiency', type: 'number', unit: '%', role: 'value'},
                 register: {reg: 32086, type: ModbusDatatype.uint16, length: 1, gain: 100}
             },
             {
                 interval: UpdateIntervalID.LOW,
-                state: {id: 'internalTemperature', name: 'Internal temperature', type: 'number', unit: '°C', role: 'value.temp'},
+                state: {id: 'internalTemperature', name: 'Internal temperature', type: 'number', unit: '°C', role: 'value.temperature'},
                 register: {reg: 32087, type: ModbusDatatype.int16, length: 1, gain: 10}
             },
             {
                 interval: UpdateIntervalID.LOW,
-                state: {id: 'deviceStatus', name: 'Device status', type: 'string', unit: '', role: 'value.status'},
+                state: {id: 'deviceStatus', name: 'Device status', type: 'string', unit: '', role: 'info.status'},
                 register: {reg: 32089, type: ModbusDatatype.uint16, length: 1},
                 mapper: value => Promise.resolve(InverterStatus[value])
             },
             {
                 interval: UpdateIntervalID.LOW,
-                state: {id: 'accumulatedEnergyYield', name: 'Accumulated energy yield', type: 'number', unit: 'kWh', role: 'value'},
+                state: {id: 'accumulatedEnergyYield', name: 'Accumulated energy yield', type: 'number', unit: 'kWh', role: 'value.energy.produced'},
                 register: {reg: 32106, type: ModbusDatatype.uint32, length: 2, gain: 100},
             },
             {
                 interval: UpdateIntervalID.LOW,
-                state: {id: 'dailyEnergyYield', name: 'Daily energy yield', type: 'number', unit: 'kWh', role: 'value'},
+                state: {id: 'dailyEnergyYield', name: 'Daily energy yield', type: 'number', unit: 'kWh', role: 'value.energy'},
                 register: {reg: 32114, type: ModbusDatatype.uint32, length: 2, gain: 100}
             },
             {
@@ -151,13 +151,13 @@ export class InverterStates {
             // storage
             {
                 interval: UpdateIntervalID.LOW,
-                state: {id: 'storage.runningState', name: 'Running state', type: 'string', role: 'value'},
+                state: {id: 'storage.runningState', name: 'Running state', type: 'string', role: 'info.status'},
                 register: {reg: 37762, type: ModbusDatatype.uint16, length: 1},
                 mapper: value => Promise.resolve(StorageStatus[value])
             },
             {
                 interval: UpdateIntervalID.HIGH,
-                state: {id: 'storage.stateOfCapacity', name: 'State of capacity', type: 'number', unit: '%', role: 'value.capacity', desc: 'SOC'},
+                state: {id: 'storage.stateOfCapacity', name: 'State of capacity', type: 'number', unit: '%', role: 'value.battery', desc: 'SOC'},
                 register: {reg: 37760, type: ModbusDatatype.uint16, length: 1, gain: 10}
             },
             {
@@ -173,12 +173,12 @@ export class InverterStates {
             },
             {
                 interval: UpdateIntervalID.LOW,
-                state: { id: 'storage.CurrentDayChargeCapacity', name: 'CurrentDayChargeCapacity', type: 'number', unit: 'kWh', role: 'value.power', desc: 'TBD' },
+                state: { id: 'storage.CurrentDayChargeCapacity', name: 'CurrentDayChargeCapacity', type: 'number', unit: 'kWh', role: 'value.energy', desc: 'TBD' },
                 register: { reg: 37015, type: ModbusDatatype.uint32, length: 2, gain: 100 }
             },
             {
                 interval: UpdateIntervalID.LOW,
-                state: { id: 'storage.CurrentDayDischargeCapacity', name: 'CurrentDayDischargeCapacity', type: 'number', unit: 'kWh', role: 'value.power', desc: 'TBD' },
+                state: { id: 'storage.CurrentDayDischargeCapacity', name: 'CurrentDayDischargeCapacity', type: 'number', unit: 'kWh', role: 'value.energy', desc: 'TBD' },
                 register: { reg: 37786, type: ModbusDatatype.uint32, length: 2, gain: 100 }
             },
 
@@ -186,13 +186,13 @@ export class InverterStates {
             // grid (meter)
             {
                 interval: UpdateIntervalID.LOW,
-                state: {id: 'grid.meterStatus', name: 'Meter status', type: 'string', role: 'value.status'},
+                state: {id: 'grid.meterStatus', name: 'Meter status', type: 'string', role: 'info.status'},
                 register: {reg: 37100, type: ModbusDatatype.uint16, length: 1},
                 mapper: value => Promise.resolve(MeterStatus[value])
             },
             {
                 interval: UpdateIntervalID.HIGH,
-                state: {id: 'grid.activePower', name: 'Active power', type: 'number', role: 'value.power', unit: 'W', desc: '(>0 feed-in to the power grid, <0: supply from the power grid)'},
+                state: {id: 'grid.activePower', name: 'Active power', type: 'number', role: 'value.power.active', unit: 'W', desc: '(>0 feed-in to the power grid, <0: supply from the power grid)'},
                 register: {reg: 37113, type: ModbusDatatype.int32, length: 2},
                 postUpdateHook: async (adapter, value): Promise<Map<string, StateToUpdate>> => {
                     return Promise.resolve(new Map<string, StateToUpdate>([
@@ -203,12 +203,12 @@ export class InverterStates {
             },
             {
                 interval: UpdateIntervalID.LOW,
-                state: {id: 'grid.reactivePower', name: 'Reactive power', type: 'number', role: 'value.power', unit: 'W'},
+                state: {id: 'grid.reactivePower', name: 'Reactive power', type: 'number', role: 'value.power.reactive', unit: 'W'},
                 register: {reg: 37115, type: ModbusDatatype.int32, length: 2},
             },
             {
                 interval: UpdateIntervalID.LOW,
-                state: {id: 'grid.powerFactor', name: 'Power factor', type: 'number', role: 'value.power.factor', unit: ''},
+                state: {id: 'grid.powerFactor', name: 'Power factor', type: 'number', role: 'value', unit: ''},
                 register: {reg: 37117, type: ModbusDatatype.int16, length: 1, gain: 1000},
             },
             {
@@ -250,12 +250,12 @@ export class InverterStates {
 
             {
                 interval: UpdateIntervalID.LOW,
-                state: {id: 'grid.positiveActivePower', name: 'Positive active power', type: 'number', role: 'value.power', unit: 'kWh', desc: 'Electricity fed by the inverter to the power grid.'},
+                state: {id: 'grid.positiveActivePower', name: 'Positive active power', type: 'number', role: 'value.power.active', unit: 'kWh', desc: 'Electricity fed by the inverter to the power grid.'},
                 register: {reg: 37119, type: ModbusDatatype.int32, length: 2, gain: 100},
             },
             {
                 interval: UpdateIntervalID.LOW,
-                state: {id: 'grid.reverseActivePower', name: 'Reverse active power', type: 'number', role: 'value.power', unit: 'kWh', desc: 'Power supplied from the power grid.'},
+                state: {id: 'grid.reverseActivePower', name: 'Reverse active power', type: 'number', role: 'value.power.active', unit: 'kWh', desc: 'Power supplied from the power grid.'},
                 register: {reg: 37121, type: ModbusDatatype.int32, length: 2, gain: 100},
             },
         ];
@@ -280,7 +280,7 @@ export class InverterStates {
     public async createStates(adapter: AdapterInstance): Promise<void> {
         for (const field of this.dataFields) {
             const state = field.state
-            await adapter.setObjectAsync(state.id, {
+            adapter.extendObject(state.id, {
                 type: 'state',
                 common: {
                     name: state.name,
