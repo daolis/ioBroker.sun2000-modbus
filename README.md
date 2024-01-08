@@ -44,4 +44,4 @@ Huawei products page: [solar.huawei.com](https://solar.huawei.com/at/professiona
 ## License
 MIT License
 
-Copyright (c) 2023 daolis <stephan.bechter@gmail.com>
+Copyright (c) 2024 daolis <stephan.bechter@gmail.com>
