@@ -51,6 +51,15 @@ class ModbusConnection {
     this.client.close(() => {
     });
   }
+  async readRawData(startRegister, length) {
+    if (!this.isOpen()) {
+      await this.open();
+    }
+    import_loglevel.default.info("Length: " + length);
+    const answer = await this.client.readHoldingRegisters(startRegister, length);
+    import_loglevel.default.debug(`Answer: ${answer}`);
+    return answer.buffer;
+  }
   async readModbusHR(register, dtype, length) {
     let words = import_modbus_types.ModbusDatatype.words(dtype);
     if (length != void 0) {

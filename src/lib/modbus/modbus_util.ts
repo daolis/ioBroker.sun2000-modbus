@@ -32,6 +32,19 @@ export class ModbusConnection {
         this.client.close(()=>{});
     }
 
+    /*
+     * Read a block of raw data.
+     */
+    async readRawData(startRegister: number, length: number): Promise<Buffer> {
+        if (!this.isOpen()) {
+            await this.open();
+        }
+        log.info('Length: ' + length);
+        const answer = await this.client.readHoldingRegisters(startRegister, length);
+        log.debug(`Answer: ${answer}`);
+        return answer.buffer;
+    }
+
     /**
      * read Holding Register (HR) from Modbus device
      * @param register decimal Modbus Register to read

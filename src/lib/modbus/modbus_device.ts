@@ -24,6 +24,10 @@ export class ModbusDevice implements Device {
         return this.ipAddress;
     }
 
+    async readRawData(register: number, length: number): Promise<Buffer> {
+        return this.connection.readRawData(register, length)
+    }
+
     async readModbusHR(register: number, datatype: ModbusDatatype, length?: number): Promise<any> {
         return this.connection.readModbusHR(register, datatype, length);
     }

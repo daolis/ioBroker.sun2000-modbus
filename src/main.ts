@@ -37,7 +37,9 @@ class Sun2000Modbus extends utils.Adapter {
     private async onReady(): Promise<void> {
         // Initialize your adapter here
 
-        this.states = new InverterStates({intervals: [this.config.updateIntervalHigh, this.config.updateIntervalHigh, this.config.updateIntervalHigh]});
+        this.states = new InverterStates(this, {intervals: [this.config.updateIntervalHigh, this.config.updateIntervalHigh, this.config.updateIntervalHigh]});
+
+        //.return;
 
         // The adapters config (in the instance object everything under the attribute "native") is accessible via
         // this.config:

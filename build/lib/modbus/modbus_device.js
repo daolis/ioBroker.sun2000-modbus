@@ -31,6 +31,9 @@ class ModbusDevice {
   getIpAddress() {
     return this.ipAddress;
   }
+  async readRawData(register, length) {
+    return this.connection.readRawData(register, length);
+  }
   async readModbusHR(register, datatype, length) {
     return this.connection.readModbusHR(register, datatype, length);
   }

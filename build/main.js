@@ -34,7 +34,7 @@ class Sun2000Modbus extends utils.Adapter {
     this.on("unload", this.onUnload.bind(this));
   }
   async onReady() {
-    this.states = new import_states.InverterStates({ intervals: [this.config.updateIntervalHigh, this.config.updateIntervalHigh, this.config.updateIntervalHigh] });
+    this.states = new import_states.InverterStates(this, { intervals: [this.config.updateIntervalHigh, this.config.updateIntervalHigh, this.config.updateIntervalHigh] });
     await this.setStateAsync("info.ip", { val: this.config.address, ack: true });
     await this.setStateAsync("info.port", { val: this.config.port, ack: true });
     await this.setStateAsync("info.unitID", { val: this.config.modbusUnitId, ack: true });

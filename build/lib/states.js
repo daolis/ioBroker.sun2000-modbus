@@ -30,7 +30,8 @@ var UpdateIntervalID = /* @__PURE__ */ ((UpdateIntervalID2) => {
   return UpdateIntervalID2;
 })(UpdateIntervalID || {});
 class InverterStates {
-  constructor(updateIntervals) {
+  constructor(adapter, updateIntervals) {
+    this.adapter = adapter;
     this.updateIntervals = updateIntervals;
     this.dataFields = [
       {
@@ -129,7 +130,7 @@ class InverterStates {
         interval: 0 /* HIGH */,
         state: { id: "storage.chargeDischargePower", name: "Charge/Discharge power", desc: "(>0 charging, <0 discharging)", type: "number", unit: "W", role: "value.power" },
         register: { reg: 37765, type: import_modbus_types.ModbusDatatype.int32, length: 2 },
-        postUpdateHook: async (adapter, value) => {
+        postUpdateHook: async (adapter2, value) => {
           return Promise.resolve(/* @__PURE__ */ new Map([
             ["storage.chargePower", { id: "storage.chargePower", value: Math.max(0, value) }],
             ["storage.dischargePower", { id: "storage.dischargePower", value: Math.abs(Math.min(0, value)) }]
@@ -156,7 +157,7 @@ class InverterStates {
         interval: 0 /* HIGH */,
         state: { id: "grid.activePower", name: "Active power", type: "number", role: "value.power.active", unit: "W", desc: "(>0 feed-in to the power grid, <0: supply from the power grid)" },
         register: { reg: 37113, type: import_modbus_types.ModbusDatatype.int32, length: 2 },
-        postUpdateHook: async (adapter, value) => {
+        postUpdateHook: async (adapter2, value) => {
           return Promise.resolve(/* @__PURE__ */ new Map([
             ["grid.feedIn", { id: "grid.feedIn", value: Math.max(0, value) }],
             ["grid.supplyFrom", { id: "grid.supplyFrom", value: Math.abs(Math.min(0, value)) }]
@@ -222,11 +223,11 @@ class InverterStates {
     this.postFetchUpdateHooks = [
       {
         interval: 0 /* HIGH */,
-        hookFn: (adapter, toUpdate) => {
+        hookFn: (adapter2, toUpdate) => {
           const powerGridActive = toUpdate.get("grid.activePower");
           const powerActiveInverter = toUpdate.get("activePower");
           const totalPowerUse = (powerActiveInverter == null ? void 0 : powerActiveInverter.value) - (powerGridActive == null ? void 0 : powerGridActive.value);
-          adapter.log.silly(`PostFetchHook: calculate totalPowerUse ${powerGridActive == null ? void 0 : powerGridActive.value}, ${powerActiveInverter == null ? void 0 : powerActiveInverter.value}, ${totalPowerUse}`);
+          adapter2.log.silly(`PostFetchHook: calculate totalPowerUse ${powerGridActive == null ? void 0 : powerGridActive.value}, ${powerActiveInverter == null ? void 0 : powerActiveInverter.value}, ${totalPowerUse}`);
           const result = /* @__PURE__ */ new Map();
           if (totalPowerUse) {
             result.set("totalPowerUse", { id: "totalPowerUse", value: totalPowerUse });
@@ -235,6 +236,12 @@ class InverterStates {
         }
       }
     ];
+    const minRegister = this.dataFields.reduce((prev, curr) => prev.register.reg < curr.register.reg ? prev : curr);
+    const maxRegister = this.dataFields.reduce((prev, curr) => prev.register.reg > curr.register.reg ? prev : curr);
+    this.adapter.log.info(`MinRegister: ${minRegister.register.reg} (${minRegister.state.name})`);
+    this.adapter.log.info(`MaxRegister: ${maxRegister.register.reg}-${maxRegister.register.length} (${maxRegister.state.name})`);
+    this.fetchStartAddress = minRegister.register.reg;
+    this.fetchEndAddress = maxRegister.register.reg + maxRegister.register.length;
   }
   async createStates(adapter) {
     for (const field of this.dataFields) {
@@ -256,12 +263,18 @@ class InverterStates {
   }
   async updateStates(adapter, device, interval) {
     let toUpdate = /* @__PURE__ */ new Map();
+    const data = await device.readRawData(this.fetchStartAddress, this.fetchEndAddress - this.fetchStartAddress);
     for (const field of this.dataFields) {
       if (field.interval != interval) {
         continue;
       }
       try {
-        let value = await device.readModbusHR(field.register.reg, field.register.type, field.register.length);
+        const startOffset = field.register.reg - this.fetchStartAddress;
+        let value = import_modbus_types.ModbusDatatype.fromBuffer(field.register.type, data.subarray(startOffset, field.register.length));
+        if (value === void 0) {
+          this.adapter.log.error(`Value for register '${field.register.reg}' is undefined!`);
+          continue;
+        }
         if (field.register.gain) {
           value /= field.register.gain;
         }

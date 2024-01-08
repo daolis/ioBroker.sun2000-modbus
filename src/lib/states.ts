@@ -56,9 +56,14 @@ export class InverterStates {
     private updateIntervals: UpdateIntervals
     private readonly dataFields: DataField[];
     private readonly postFetchUpdateHooks: PostFetchUpdateHook[];
+    private adapter: AdapterInstance;
+    private readonly fetchStartAddress: number;
+    private readonly fetchEndAddress: number;
+
     // private changingFields: DataField[];
 
-    constructor(updateIntervals: UpdateIntervals) {
+    constructor(adapter: AdapterInstance, updateIntervals: UpdateIntervals) {
+        this.adapter = adapter;
         this.updateIntervals = updateIntervals;
         this.dataFields = [
             // initial fields (no interval set) - no repetitive update
@@ -275,6 +280,13 @@ export class InverterStates {
                 }
             }
         ];
+
+        const minRegister = this.dataFields.reduce((prev, curr) => prev.register.reg < curr.register.reg ? prev : curr);
+        const maxRegister = this.dataFields.reduce((prev, curr) => prev.register.reg > curr.register.reg ? prev : curr);
+        this.adapter.log.info(`MinRegister: ${minRegister.register.reg} (${minRegister.state.name})`)
+        this.adapter.log.info(`MaxRegister: ${maxRegister.register.reg}-${maxRegister.register.length} (${maxRegister.state.name})`)
+        this.fetchStartAddress = minRegister.register.reg;
+        this.fetchEndAddress = maxRegister.register.reg + maxRegister.register.length;
     }
 
     public async createStates(adapter: AdapterInstance): Promise<void> {
@@ -299,12 +311,22 @@ export class InverterStates {
 
     public async updateStates(adapter: AdapterInstance, device: ModbusDevice, interval?: UpdateIntervalID): Promise<number> {
         let toUpdate = new Map<string, StateToUpdate>;
+        const data = await device.readRawData(this.fetchStartAddress, this.fetchEndAddress - this.fetchStartAddress);
+
         for (const field of this.dataFields) {
-            if (field.interval != interval) {
-                continue;
-            }
+            // Ignore interval for now!
+            // if (field.interval != interval) {
+            //     continue;
+            // }
             try {
-                let value = await device.readModbusHR(field.register.reg, field.register.type, field.register.length);
+                const startOffset = field.register.reg - this.fetchStartAddress
+                let value: any = ModbusDatatype.fromBuffer(field.register.type, data.subarray(startOffset, field.register.length));
+                if (value === undefined) {
+                    this.adapter.log.error(`Value for register '${field.register.reg}' is undefined!`)
+                    continue
+                }
+                // field.register.type.
+                //  let value2 = await device.readModbusHR(field.register.reg, field.register.type, field.register.length);
 
                 if (field.register.gain) {
                     value /= field.register.gain;
