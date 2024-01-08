@@ -1,6 +1,6 @@
 {
   "name": "iobroker.sun2000-modbus",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Connect to Huawei SUN2000 inverter with Modbus TCP",
   "author": {
     "name": "daolis",

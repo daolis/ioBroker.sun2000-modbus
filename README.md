@@ -31,8 +31,7 @@ Huawei products page: [solar.huawei.com](https://solar.huawei.com/at/professiona
 
 
 ## Changelog
-
-### **WORK IN PROGRESS**
+### 0.0.2 (2024-01-08)
 
 * Added storage CurrentDayChargeCapacity and CurrentDayDischargeCapacity
 * Changes from [Add sun2000-modbus to latest](https://github.com/ioBroker/ioBroker.repositories/pull/3038)
