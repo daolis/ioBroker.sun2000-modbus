@@ -133,12 +133,12 @@ export class InverterStates {
             },
             {
                 interval: UpdateIntervalID.LOW,
-                state: {id: 'generatedenergymonth', name: 'Daily generated Energy', type: 'number', unit: 'kWh', role: 'value.energy.generated'},
+                state: {id: 'generatedenergymonth', name: 'Monthly generated Energy', type: 'number', unit: 'kWh', role: 'value.energy.generated'},
                 register: {reg: 32116, type: ModbusDatatype.uint32, length: 2, gain: 100},
             },
             {
                 interval: UpdateIntervalID.LOW,
-                state: {id: 'generatedenergyyear', name: 'Daily generated Energy', type: 'number', unit: 'kWh', role: 'value.energy.generated'},
+                state: {id: 'generatedenergyyear', name: 'Yearly generated Energy', type: 'number', unit: 'kWh', role: 'value.energy.generated'},
                 register: {reg: 32118, type: ModbusDatatype.uint32, length: 2, gain: 100},
             },
             {
