@@ -165,47 +165,47 @@ export class InverterStates {
             // MPPT
            {
                 interval: UpdateIntervalID.LOW,
-                state: {id: 'mppt1power', name: 'MPPT 1 Power', type: 'number', unit: 'kWh', role: 'value.power.active', desc: 'Total input power of MPPT1'},
+                state: {id: 'mppt1power', name: 'MPPT 1 Power', type: 'number', unit: 'kWh', role: 'value.energy.produced', desc: 'Total input power of MPPT1'},
                 register: {reg: 32324, type: ModbusDatatype.int32, length: 2}
             },
             {
                 interval: UpdateIntervalID.LOW,
-                state: {id: 'mppt2power', name: 'MPPT 2 Power', type: 'number', unit: 'kWh', role: 'value.power.active', desc: 'Total input power of MPPT2'},
+                state: {id: 'mppt2power', name: 'MPPT 2 Power', type: 'number', unit: 'kWh', role: 'value.energy.produced', desc: 'Total input power of MPPT2'},
                 register: {reg: 32326, type: ModbusDatatype.int32, length: 2}
             },
             {
                 interval: UpdateIntervalID.LOW,
-                state: {id: 'mppt3power', name: 'MPPT 3 Power', type: 'number', unit: 'kWh', role: 'value.power.active', desc: 'Total input power of MPPT3'},
+                state: {id: 'mppt3power', name: 'MPPT 3 Power', type: 'number', unit: 'kWh', role: 'value.energy.produced', desc: 'Total input power of MPPT3'},
                 register: {reg: 32328, type: ModbusDatatype.int32, length: 2}
             },
             {
                 interval: UpdateIntervalID.LOW,
-                state: {id: 'mppt4power', name: 'MPPT 4 Power', type: 'number', unit: 'kWh', role: 'value.power.active', desc: 'Total input power of MPPT4'},
+                state: {id: 'mppt4power', name: 'MPPT 4 Power', type: 'number', unit: 'kWh', role: 'value.energy.produced', desc: 'Total input power of MPPT4'},
                 register: {reg: 32330, type: ModbusDatatype.int32, length: 2}
             },
             {
                 interval: UpdateIntervalID.LOW,
-                state: {id: 'mppt5power', name: 'MPPT 5 Power', type: 'number', unit: 'kWh', role: 'value.power.active', desc: 'Total input power of MPPT5'},
+                state: {id: 'mppt5power', name: 'MPPT 5 Power', type: 'number', unit: 'kWh', role: 'value.energy.produced', desc: 'Total input power of MPPT5'},
                 register: {reg: 32332, type: ModbusDatatype.int32, length: 2}
             },
             {
                 interval: UpdateIntervalID.LOW,
-                state: {id: 'mppt6power', name: 'MPPT 6 Power', type: 'number', unit: 'kWh', role: 'value.power.active', desc: 'Total input power of MPPT6'},
+                state: {id: 'mppt6power', name: 'MPPT 6 Power', type: 'number', unit: 'kWh', role: 'value.energy.produced', desc: 'Total input power of MPPT6'},
                 register: {reg: 32334, type: ModbusDatatype.int32, length: 2}
             },
             {
                 interval: UpdateIntervalID.LOW,
-                state: {id: 'mppt7power', name: 'MPPT 7 Power', type: 'number', unit: 'kWh', role: 'value.power.active', desc: 'Total input power of MPPT7'},
+                state: {id: 'mppt7power', name: 'MPPT 7 Power', type: 'number', unit: 'kWh', role: 'value.energy.produced', desc: 'Total input power of MPPT7'},
                 register: {reg: 32336, type: ModbusDatatype.int32, length: 2}
             },
             {
                 interval: UpdateIntervalID.LOW,
-                state: {id: 'mppt8power', name: 'MPPT 8 Power', type: 'number', unit: 'kWh', role: 'value.power.active', desc: 'Total input power of MPPT8'},
+                state: {id: 'mppt8power', name: 'MPPT 8 Power', type: 'number', unit: 'kWh', role: 'value.energy.produced', desc: 'Total input power of MPPT8'},
                 register: {reg: 32338, type: ModbusDatatype.int32, length: 2}
             },
             {
                 interval: UpdateIntervalID.LOW,
-                state: {id: 'mppt9power', name: 'MPPT 9 Power', type: 'number', unit: 'kWh', role: 'value.power.active', desc: 'Total input power of MPPT9'},
+                state: {id: 'mppt9power', name: 'MPPT 9 Power', type: 'number', unit: 'kWh', role: 'value.energy.produced', desc: 'Total input power of MPPT9'},
                 register: {reg: 32340, type: ModbusDatatype.int32, length: 2}
             },
             // ####################################################################################################################################
