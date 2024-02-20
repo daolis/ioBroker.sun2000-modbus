@@ -242,6 +242,16 @@ export class InverterStates {
                 state: { id: 'storage.CurrentDayDischargeCapacity', name: 'CurrentDayDischargeCapacity', type: 'number', unit: 'kWh', role: 'value.energy', desc: 'TBD' },
                 register: { reg: 37786, type: ModbusDatatype.uint32, length: 2, gain: 100 }
             },
+                        {
+                interval: UpdateIntervalID.LOW,
+                state: { id: 'storage.TotalCharge', name: 'StorageTotalCharge', type: 'number', unit: 'kWh', role: 'value.energy', desc: 'TBD' },
+                register: { reg: 37080, type: ModbusDatatype.uint32, length: 2, gain: 100 }
+            },
+            {
+                interval: UpdateIntervalID.LOW,
+                state: { id: 'storage.TotalDischarge', name: 'StorageTotalDischarge', type: 'number', unit: 'kWh', role: 'value.energy', desc: 'TBD' },
+                register: { reg: 37782, type: ModbusDatatype.uint32, length: 2, gain: 100 }
+            },
 
             // ####################################################################################################################################
             // grid (meter)
