@@ -2,10 +2,15 @@ import {ModbusDatatype} from './modbus/modbus_types';
 import {InverterStatus, MeterStatus, StorageStatus} from './state_enums';
 import {AdapterInstance} from '@iobroker/adapter-core';
 import {ModbusDevice} from './modbus/modbus_device';
+import {start} from "node:repl";
 
 type MapperFn = (value: any) => Promise<any>
 type PostUpdateHookFn = (adapter: AdapterInstance, value: any) => Promise<Map<string, StateToUpdate>>
 type PostFetchUpdateHookFn = (adapter: AdapterInstance, toUpdate: Map<string, StateToUpdate>) => Map<string, StateToUpdate>
+
+const MAX_GAP: number = 30;
+const MAX_BLOCKLENGTH: number = 110;
+
 
 interface DataField {
     interval?: UpdateIntervalID;
@@ -38,52 +43,69 @@ interface ModbusRegister {
 }
 
 export enum UpdateIntervalID {
+    INTIAL,
     HIGH,
     LOW
 }
 
-interface UpdateIntervals {
-    intervals: number[];
-}
+// interface UpdateIntervals {
+//     intervals: number[];
+// }
 
 interface PostFetchUpdateHook {
     interval: UpdateIntervalID;
     hookFn: PostFetchUpdateHookFn;
 }
 
+export interface FetchBlock {
+    Start: number;
+    End: number;
+    Fields: DataField[];
+}
+
 export class InverterStates {
 
-    private updateIntervals: UpdateIntervals
+    // private updateIntervals: UpdateIntervals
     private readonly dataFields: DataField[];
     private readonly postFetchUpdateHooks: PostFetchUpdateHook[];
     private adapter: AdapterInstance;
-    private readonly fetchStartAddress: number;
-    private readonly fetchEndAddress: number;
+    // private readonly fetchStartAddress: number;
+    // private readonly fetchEndAddress: number;
+    // private readonly fetchBlocks: FetchBlock[];
+
+    private readonly fetchBlocks: Map<number, FetchBlock[]> = new Map<number, FetchBlock[]>();
+    // private readonly initialDataBlocks: FetchBlock[];
+    // private readonly lowIntervalDataBlocks: FetchBlock[];
+    // private readonly highIntervalDataBlocks: FetchBlock[];
 
     // private changingFields: DataField[];
 
-    constructor(adapter: AdapterInstance, updateIntervals: UpdateIntervals) {
+    constructor(adapter: AdapterInstance) {
         this.adapter = adapter;
-        this.updateIntervals = updateIntervals;
         this.dataFields = [
             // initial fields (no interval set) - no repetitive update
             {
+                interval: UpdateIntervalID.INTIAL,
                 state: {id: 'info.model', name: 'Model', type: 'string', role: 'info.name'},
                 register: {reg: 30000, type: ModbusDatatype.string, length: 15}
             },
             {
+                interval: UpdateIntervalID.INTIAL,
                 state: {id: 'info.modelID', name: 'Model ID', type: 'number', role: 'info.hardware'},
                 register: {reg: 30070, type: ModbusDatatype.uint16, length: 1}
             },
             {
+                interval: UpdateIntervalID.INTIAL,
                 state: {id: 'info.serialNumber', name: 'Serial number', type: 'string', role: 'info.serial'},
                 register: {reg: 30015, type: ModbusDatatype.string, length: 10}
             },
             {
+                interval: UpdateIntervalID.INTIAL,
                 state: {id: 'info.ratedPower', name: 'Rated power', type: 'number', unit: 'W', role: 'value.power'},
                 register: {reg: 30073, type: ModbusDatatype.int32, length: 2}
             },
             {
+                interval: UpdateIntervalID.INTIAL,
                 state: {id: 'info.numberMPPTrackers', name: 'Number of MPP trackers', type: 'number', unit: '', role: 'value'},
                 register: {reg: 30072, type: ModbusDatatype.uint16, length: 1, gain: 1}
             },
@@ -124,7 +146,7 @@ export class InverterStates {
             {
                 interval: UpdateIntervalID.LOW,
                 state: {id: 'accumulatedEnergyYield', name: 'Accumulated energy yield', type: 'number', unit: 'kWh', role: 'value.energy.produced'},
-                register: {reg: 32106, type: ModbusDatatype.uint32, length: 2, gain: 100},
+                register: {reg: 32106, type: ModbusDatatype.uint32, length: 2, gain: 100}
             },
             {
                 interval: UpdateIntervalID.LOW,
@@ -178,13 +200,13 @@ export class InverterStates {
             },
             {
                 interval: UpdateIntervalID.LOW,
-                state: { id: 'storage.CurrentDayChargeCapacity', name: 'CurrentDayChargeCapacity', type: 'number', unit: 'kWh', role: 'value.energy', desc: 'TBD' },
-                register: { reg: 37015, type: ModbusDatatype.uint32, length: 2, gain: 100 }
+                state: {id: 'storage.CurrentDayChargeCapacity', name: 'CurrentDayChargeCapacity', type: 'number', unit: 'kWh', role: 'value.energy', desc: 'TBD'},
+                register: {reg: 37015, type: ModbusDatatype.uint32, length: 2, gain: 100}
             },
             {
                 interval: UpdateIntervalID.LOW,
-                state: { id: 'storage.CurrentDayDischargeCapacity', name: 'CurrentDayDischargeCapacity', type: 'number', unit: 'kWh', role: 'value.energy', desc: 'TBD' },
-                register: { reg: 37786, type: ModbusDatatype.uint32, length: 2, gain: 100 }
+                state: {id: 'storage.CurrentDayDischargeCapacity', name: 'CurrentDayDischargeCapacity', type: 'number', unit: 'kWh', role: 'value.energy', desc: 'TBD'},
+                register: {reg: 37786, type: ModbusDatatype.uint32, length: 2, gain: 100}
             },
 
             // ####################################################################################################################################
@@ -255,7 +277,14 @@ export class InverterStates {
 
             {
                 interval: UpdateIntervalID.LOW,
-                state: {id: 'grid.positiveActivePower', name: 'Positive active power', type: 'number', role: 'value.power.active', unit: 'kWh', desc: 'Electricity fed by the inverter to the power grid.'},
+                state: {
+                    id: 'grid.positiveActivePower',
+                    name: 'Positive active power',
+                    type: 'number',
+                    role: 'value.power.active',
+                    unit: 'kWh',
+                    desc: 'Electricity fed by the inverter to the power grid.'
+                },
                 register: {reg: 37119, type: ModbusDatatype.int32, length: 2, gain: 100},
             },
             {
@@ -281,17 +310,107 @@ export class InverterStates {
             }
         ];
 
-        const minRegister = this.dataFields.reduce((prev, curr) => prev.register.reg < curr.register.reg ? prev : curr);
-        const maxRegister = this.dataFields.reduce((prev, curr) => prev.register.reg > curr.register.reg ? prev : curr);
-        this.adapter.log.info(`MinRegister: ${minRegister.register.reg} (${minRegister.state.name})`)
-        this.adapter.log.info(`MaxRegister: ${maxRegister.register.reg}-${maxRegister.register.length} (${maxRegister.state.name})`)
-        this.fetchStartAddress = minRegister.register.reg;
-        this.fetchEndAddress = maxRegister.register.reg + maxRegister.register.length;
+        const initalBlocks = this.blockFields(UpdateIntervalID.INTIAL);
+        this.fetchBlocks.set(UpdateIntervalID.INTIAL, initalBlocks);
+        adapter.log.info(`Calculated ${initalBlocks.length} fetch blocks for INITIAL registers`);
+        for (const block of initalBlocks) {
+            adapter.log.debug(`  [${block.Start}-${block.End}]`)
+        }
+
+        const highBlocks = this.blockFields(UpdateIntervalID.HIGH);
+        this.fetchBlocks.set(UpdateIntervalID.HIGH, highBlocks);
+        adapter.log.info(`Calculated ${highBlocks.length} fetch blocks for HIGH interval registers`);
+        for (const block of highBlocks) {
+            adapter.log.debug(`  [${block.Start}-${block.End}]`)
+        }
+
+        const lowBlocks = this.blockFields(UpdateIntervalID.LOW);
+        this.fetchBlocks.set(UpdateIntervalID.LOW, lowBlocks);
+        adapter.log.info(`Calculated ${lowBlocks.length} fetch blocks for LOW interval registers`);
+        for (const block of lowBlocks) {
+            adapter.log.debug(`  [${block.Start}-${block.End}]`)
+        }
+    }
+
+    public blockFields(interval: number): FetchBlock[] {
+        this.dataFields.sort((a, b) => a.register.reg - b.register.reg);
+
+        const blocks: FetchBlock[] = [];
+        let currentBlock: FetchBlock = {Start: -1, End: -1, Fields: []};
+        for (const field of this.dataFields) {
+            if (field.interval !== interval) {
+                continue;
+            }
+            const startAddr = field.register.reg;
+            const endAddr = field.register.reg + field.register.length;
+            if (currentBlock.Start == -1) {
+                // new block
+                currentBlock.Start = startAddr;
+                currentBlock.End = endAddr;
+                currentBlock.Fields = [field];
+            } else if (startAddr <= currentBlock.End + MAX_GAP) {
+                // extend current block
+                currentBlock.End = endAddr
+                currentBlock.Fields.push(field);
+            } else {
+                // add current block and start a new one
+                blocks.push(currentBlock);
+                currentBlock = {Start: startAddr, End: endAddr, Fields: [field]};
+            }
+        }
+        // add last block
+        if (currentBlock.Start !== -1) {
+            blocks.push(currentBlock);
+        }
+        return this.combineBlocks(blocks, MAX_GAP + 5, 1)
+    }
+
+    private combineBlocks(blocks: FetchBlock[], gapSize: number, count: number): FetchBlock[] {
+        count++;
+        if (count > 20) {
+            return blocks;
+        }
+        const combinedBlocks: FetchBlock[] = [];
+        let maxBlockLen = 0;
+        let i: number;
+        for (i = 0; i < blocks.length - 1; i++) {
+            if (blocks[i + 1].Start - blocks[i].End <= gapSize) {
+                // combine blocks...
+                const blockToAdd: FetchBlock = {Start: blocks[i].Start, End: blocks[i + 1].End, Fields: blocks[i].Fields.concat(blocks[i + 1].Fields)};
+                const blockLen = blockToAdd.End - blockToAdd.Start;
+                if (blockLen > maxBlockLen) {
+                    maxBlockLen = blockLen;
+                }
+                if (blockLen <= maxBlockLen) {
+                    combinedBlocks.push(blockToAdd);
+                    i++; // skip next block
+                    continue;
+                }
+            }
+            const blockLen = blocks[i].End - blocks[i].Start;
+            if (blockLen > maxBlockLen) {
+                maxBlockLen = blockLen;
+            }
+            combinedBlocks.push(blocks[i]);
+        }
+        if (blocks.length - 1 == i) {
+            // add last block, if not combined
+            combinedBlocks.push(blocks[blocks.length - 1]);
+        }
+        if (maxBlockLen > MAX_BLOCKLENGTH || combinedBlocks.length == 1) {
+            if (maxBlockLen > MAX_BLOCKLENGTH) {
+                return blocks;
+            } else {
+                return combinedBlocks
+            }
+        }
+        return this.combineBlocks(blocks, gapSize + 5, count);
     }
 
     public async createStates(adapter: AdapterInstance): Promise<void> {
         for (const field of this.dataFields) {
             const state = field.state
+            const description = `${state.desc} (Register: ${field.register.reg})`
             adapter.extendObject(state.id, {
                 type: 'state',
                 common: {
@@ -299,7 +418,7 @@ export class InverterStates {
                     type: state.type,
                     role: state.role,
                     unit: state.unit,
-                    desc: state.desc,
+                    desc: description,
                     read: true,
                     write: false
                 },
@@ -309,48 +428,62 @@ export class InverterStates {
     }
 
 
-    public async updateStates(adapter: AdapterInstance, device: ModbusDevice, interval?: UpdateIntervalID): Promise<number> {
+    public async updateStates(adapter: AdapterInstance, device: ModbusDevice, interval: UpdateIntervalID): Promise<number> {
         let toUpdate = new Map<string, StateToUpdate>;
-        const data = await device.readRawData(this.fetchStartAddress, this.fetchEndAddress - this.fetchStartAddress);
+        const fetchBlock = this.fetchBlocks.get(interval);
+        if (!fetchBlock) {
+            throw new Error(`Unsupported interval ${interval}`);
+        }
 
-        for (const field of this.dataFields) {
-            // Ignore interval for now!
-            // if (field.interval != interval) {
-            //     continue;
-            // }
+        this.adapter.log.debug(`Fetch data for ${fetchBlock.length} blocks`);
+
+        for (const block of fetchBlock) {
+
+            this.adapter.log.debug(`Fetch data for block [${block.Start}-${block.End}] containing ${block.Fields.length} registers`);
+
             try {
-                const startOffset = field.register.reg - this.fetchStartAddress
-                let value: any = ModbusDatatype.fromBuffer(field.register.type, data.subarray(startOffset, field.register.length));
-                if (value === undefined) {
-                    this.adapter.log.error(`Value for register '${field.register.reg}' is undefined!`)
-                    continue
-                }
-                // field.register.type.
-                //  let value2 = await device.readModbusHR(field.register.reg, field.register.type, field.register.length);
+                const startAddress = block.Start;
+                const blockLength = block.End - block.Start;
+                const buffer = await device.readRawData(startAddress, blockLength);
 
-                if (field.register.gain) {
-                    value /= field.register.gain;
-                }
-                if (field.mapper) {
-                    value = await field.mapper(value);
-                }
-                toUpdate.set(field.state.id, {id: field.state.id, value: value})
-                if (field.postUpdateHook) {
-                    const hookUpdates = await field.postUpdateHook(adapter, value);
-                    for (const entry of hookUpdates.entries()) {
-                        toUpdate.set(entry[0], entry[1]);
+                // adapter.log.info(`Buffer: ${buffer.toString()}`);
+                for (const field of block.Fields) {
+                    // get correct value from buffer (be aware of the *2 ->  fetching words, not bytes)
+                    const startOffset = (field.register.reg - block.Start) * 2
+                    const valueBuffer = buffer.subarray(startOffset, startOffset + (field.register.length *2));
+                    // adapter.log.debug(`GetFromBuffer: buffer-length: [${buffer.byteLength}],  offset [${startOffset}], length: [${field.register.length}]`);
+                    let value: any = ModbusDatatype.fromBuffer(field.register.type, valueBuffer);
+                    // adapter.log.debug(`GetFromBuffer: value for register [${field.register.reg},${field.register.length}] (${field.state.name}): ${value}`);
+
+                    if (value === undefined) {
+                        this.adapter.log.error(`Value for register '${field.register.reg}' is undefined!`);
+                        continue;
+                    }
+
+                    if (field.register.gain) {
+                        value /= field.register.gain;
+                    }
+                    if (field.mapper) {
+                        value = await field.mapper(value);
+                    }
+                    toUpdate.set(field.state.id, {id: field.state.id, value: value});
+                    if (field.postUpdateHook) {
+                        const hookUpdates = await field.postUpdateHook(adapter, value);
+                        for (const entry of hookUpdates.entries()) {
+                            toUpdate.set(entry[0], entry[1]);
+                        }
                     }
                 }
             } catch (e) {
-                adapter.log.warn(`Error while reading from ${device.getIpAddress()}: [${field.register.reg}|${field.register.length}] '' with : ${e}`);
+                adapter.log.warn(`Error while reading block from ${device.getIpAddress()}: [${block.Start}-${block.End}] '' with : ${e}`);
                 break;
             }
         }
-
         toUpdate = this.runPostFetchHooks(adapter, toUpdate, interval);
 
         return this.updateAdapterStates(adapter, toUpdate);
     }
+
 
     public runPostFetchHooks(adapter: AdapterInstance, toUpdate: Map<string, StateToUpdate>, interval: UpdateIntervalID | undefined): Map<string, StateToUpdate> {
         for (const postFetchHook of this.postFetchUpdateHooks) {
@@ -365,7 +498,7 @@ export class InverterStates {
     }
 
     public async updateAdapterStates(adapter: AdapterInstance, toUpdate: Map<string, StateToUpdate>): Promise<number> {
-        for(const updateEntry of toUpdate.values()) {
+        for (const updateEntry of toUpdate.values()) {
             if (updateEntry.value !== null) {
                 await adapter.setStateAsync(updateEntry.id, {val: updateEntry.value, ack: true});
                 if (updateEntry.postUpdateHook) {

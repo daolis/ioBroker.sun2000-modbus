@@ -37,9 +37,8 @@ class Sun2000Modbus extends utils.Adapter {
     private async onReady(): Promise<void> {
         // Initialize your adapter here
 
-        this.states = new InverterStates(this, {intervals: [this.config.updateIntervalHigh, this.config.updateIntervalHigh, this.config.updateIntervalHigh]});
+        this.states = new InverterStates(this);
 
-        //.return;
 
         // The adapters config (in the instance object everything under the attribute "native") is accessible via
         // this.config:
@@ -51,14 +50,19 @@ class Sun2000Modbus extends utils.Adapter {
 
         this.device = new ModbusDevice(this.config.address, this.config.port, this.config.modbusUnitId);
 
-        this.log.info('Create states');
-        await this.states.createStates(this);
-        this.log.info('Update initial states');
-        await this.states.updateStates(this, this.device); // no recurring update
-
         if (this.device.isConnected()) {
             await this.setStateAsync('info.connection', true, true);
         }
+
+        // initial states are pre-defined in json config, so states already exists.
+        // We need data from there for dynamically creation of states
+        // e.g. create only number of existing MPPTracker values (no unused states and no unnecessary fetch of modbus registers)
+        this.log.info('Update initial states');
+        await this.states.updateStates(this, this.device, UpdateIntervalID.INTIAL); // no recurring update
+        //await this.states.updateStates(this, this.device); // no recurring update
+
+        this.log.info('Create states');
+        await this.states.createStates(this);
 
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const self = this;

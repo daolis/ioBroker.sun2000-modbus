@@ -39,10 +39,16 @@ export class ModbusConnection {
         if (!this.isOpen()) {
             await this.open();
         }
+        console.log(`Length: ${length}`)
         log.info('Length: ' + length);
-        const answer = await this.client.readHoldingRegisters(startRegister, length);
-        log.debug(`Answer: ${answer}`);
-        return answer.buffer;
+        return this.client.readHoldingRegisters(startRegister, length)
+            .then((answer) => answer.buffer)
+            // .catch((err) => {
+            //     console.log(err)
+            // })
+        //const answer = await this.client.readHoldingRegisters(startRegister, length);
+        // log.debug(`Answer: ${answer}`);
+        // return answer.buffer;
     }
 
     /**

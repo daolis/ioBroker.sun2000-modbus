@@ -30,12 +30,12 @@ see the [documentation page](./docs/README.md)
 * [#26](https://github.com/daolis/ioBroker.sun2000-modbus/issues/26) Renamed stateOfCapacity to stateOfCharge\
   Migration of historical data: see [Migration of historical data (on state name change)](docs/migration.md)
 
+* Blocked reading of registers - faster when fetching data from inverter
+
 ### 0.0.2 (2024-01-08)
 
 * Added storage CurrentDayChargeCapacity and CurrentDayDischargeCapacity
 * Changes from [Add sun2000-modbus to latest](https://github.com/ioBroker/ioBroker.repositories/pull/3038)
-* Renamed stateOfCapacity to stateOfCharge\
-  Migration of historical data: see comment in [#26](https://github.com/daolis/ioBroker.sun2000-modbus/issues/26#issuecomment-1875627603)
 
 ### 0.0.1 (2023-11-26)
 

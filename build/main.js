@@ -34,20 +34,20 @@ class Sun2000Modbus extends utils.Adapter {
     this.on("unload", this.onUnload.bind(this));
   }
   async onReady() {
-    this.states = new import_states.InverterStates(this, { intervals: [this.config.updateIntervalHigh, this.config.updateIntervalHigh, this.config.updateIntervalHigh] });
+    this.states = new import_states.InverterStates(this);
     await this.setStateAsync("info.ip", { val: this.config.address, ack: true });
     await this.setStateAsync("info.port", { val: this.config.port, ack: true });
     await this.setStateAsync("info.unitID", { val: this.config.modbusUnitId, ack: true });
     await this.setStateAsync("info.modbusUpdateIntervalHigh", { val: this.config.updateIntervalHigh, ack: true });
     await this.setStateAsync("info.modbusUpdateIntervalLow", { val: this.config.updateIntervalLow, ack: true });
     this.device = new import_modbus_device.ModbusDevice(this.config.address, this.config.port, this.config.modbusUnitId);
-    this.log.info("Create states");
-    await this.states.createStates(this);
-    this.log.info("Update initial states");
-    await this.states.updateStates(this, this.device);
     if (this.device.isConnected()) {
       await this.setStateAsync("info.connection", true, true);
     }
+    this.log.info("Update initial states");
+    await this.states.updateStates(this, this.device, import_states.UpdateIntervalID.INTIAL);
+    this.log.info("Create states");
+    await this.states.createStates(this);
     const self = this;
     this.scheduler.addInterval("HIGH", this.config.updateIntervalHigh, async () => {
       return this.states.updateStates(self, this.device, import_states.UpdateIntervalID.HIGH);
