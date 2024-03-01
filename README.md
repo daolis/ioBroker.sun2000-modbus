@@ -26,10 +26,12 @@ Huawei products page: [solar.huawei.com](https://solar.huawei.com/at/professiona
 see the [documentation page](./docs/README.md)
 
 ## Changelog
+
 ### **WORK IN PROGRESS**
+
+* Added documentation - WIP
 * [#26](https://github.com/daolis/ioBroker.sun2000-modbus/issues/26) Renamed stateOfCapacity to stateOfCharge\
   Migration of historical data: see [Migration of historical data (on state name change)](docs/migration.md)
-
 * Blocked reading of registers - faster when fetching data from inverter
 
 ### 0.0.2 (2024-01-08)

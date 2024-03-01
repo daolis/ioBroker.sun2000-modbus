@@ -58,8 +58,9 @@ class Sun2000Modbus extends utils.Adapter {
         // We need data from there for dynamically creation of states
         // e.g. create only number of existing MPPTracker values (no unused states and no unnecessary fetch of modbus registers)
         this.log.info('Update initial states');
-        await this.states.updateStates(this, this.device, UpdateIntervalID.INTIAL); // no recurring update
-        //await this.states.updateStates(this, this.device); // no recurring update
+        const initialValues = await this.states.updateStates(this, this.device, UpdateIntervalID.INTIAL); // no recurring update
+
+        this.states.runPostInitialFetchHooks(this, initialValues);
 
         this.log.info('Create states');
         await this.states.createStates(this);
@@ -70,10 +71,10 @@ class Sun2000Modbus extends utils.Adapter {
         this.scheduler.addInterval('HIGH', this.config.updateIntervalHigh, async () => {
             return this.states.updateStates(self, this.device, UpdateIntervalID.HIGH);
         });
-        this.scheduler.addInterval('LOW', this.config.updateIntervalLow, async () => {
-            const countHigh = await this.states.updateStates(self, this.device, UpdateIntervalID.HIGH);
-            const countLow = await this.states.updateStates(self, this.device, UpdateIntervalID.LOW);
-            return Promise.resolve(countHigh + countLow)
+        this.scheduler.addInterval('LOW', this.config.updateIntervalLow,  async () => {
+            const countHighResult = await this.states.updateStates(self, this.device, UpdateIntervalID.HIGH);
+            const countLowResult = await this.states.updateStates(self, this.device, UpdateIntervalID.LOW);
+            return Promise.resolve(new Map([...countHighResult, ...countLowResult]))
         });
 
         this.scheduler.init();
@@ -95,7 +96,10 @@ class Sun2000Modbus extends utils.Adapter {
             const timeSinceLastUpdate = (new Date().getTime() - self.lastUpdated) / 1000;
             this.log.debug(`Watchdog: ${timeSinceLastUpdate}`)
             if (timeSinceLastUpdate > 2 * maxInterval) {
+                await this.setStateAsync('info.connection', false, true);
                 this.log.info(`Re-trigger sync... timeoutID: ${self.timeout}`)
+                this.device.close()
+                //this.device = new ModbusDevice(this.config.address, this.config.port, this.config.modbusUnitId);
                 await this.runSync();
             }
         }, maxInterval * 1000);

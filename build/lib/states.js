@@ -105,6 +105,16 @@ class InverterStates {
       },
       {
         interval: 2 /* LOW */,
+        state: { id: "monthlyEnergyYield", name: "Monthly energy yield", type: "number", unit: "kWh", role: "value.energy" },
+        register: { reg: 32116, type: import_modbus_types.ModbusDatatype.uint32, length: 2, gain: 100 }
+      },
+      {
+        interval: 2 /* LOW */,
+        state: { id: "yearlyEnergyYield", name: "Yearly energy yield", type: "number", unit: "kWh", role: "value.energy" },
+        register: { reg: 32118, type: import_modbus_types.ModbusDatatype.uint32, length: 2, gain: 100 }
+      },
+      {
+        interval: 2 /* LOW */,
         state: { id: "PV1Voltage", name: "PV1 voltage", type: "number", unit: "V", role: "value.voltage" },
         register: { reg: 32016, type: import_modbus_types.ModbusDatatype.int16, length: 1, gain: 10 }
       },
@@ -122,6 +132,21 @@ class InverterStates {
         interval: 2 /* LOW */,
         state: { id: "PV2Current", name: "PV2 current", type: "number", unit: "A", role: "value.current" },
         register: { reg: 32019, type: import_modbus_types.ModbusDatatype.int16, length: 1, gain: 100 }
+      },
+      {
+        interval: 1 /* HIGH */,
+        state: { id: "alarm1", name: "Alarm1" },
+        register: { reg: 32008, type: import_modbus_types.ModbusDatatype.uint16, length: 1 }
+      },
+      {
+        interval: 1 /* HIGH */,
+        state: { id: "alarm2", name: "Alarm2" },
+        register: { reg: 32009, type: import_modbus_types.ModbusDatatype.uint16, length: 1 }
+      },
+      {
+        interval: 1 /* HIGH */,
+        state: { id: "alarm3", name: "Alarm3" },
+        register: { reg: 32010, type: import_modbus_types.ModbusDatatype.uint16, length: 1 }
       },
       {
         interval: 2 /* LOW */,
@@ -147,12 +172,12 @@ class InverterStates {
       },
       {
         interval: 2 /* LOW */,
-        state: { id: "storage.CurrentDayChargeCapacity", name: "CurrentDayChargeCapacity", type: "number", unit: "kWh", role: "value.energy", desc: "TBD" },
+        state: { id: "storage.currentDayChargeCapacity", name: "CurrentDayChargeCapacity", type: "number", unit: "kWh", role: "value.energy", desc: "TBD" },
         register: { reg: 37015, type: import_modbus_types.ModbusDatatype.uint32, length: 2, gain: 100 }
       },
       {
         interval: 2 /* LOW */,
-        state: { id: "storage.CurrentDayDischargeCapacity", name: "CurrentDayDischargeCapacity", type: "number", unit: "kWh", role: "value.energy", desc: "TBD" },
+        state: { id: "storage.currentDayDischargeCapacity", name: "CurrentDayDischargeCapacity", type: "number", unit: "kWh", role: "value.energy", desc: "TBD" },
         register: { reg: 37786, type: import_modbus_types.ModbusDatatype.uint32, length: 2, gain: 100 }
       },
       {
@@ -249,6 +274,51 @@ class InverterStates {
           }
           return result;
         }
+      },
+      {
+        interval: 1 /* HIGH */,
+        hookFn: (adapter2, toUpdate) => {
+          const alarm1 = toUpdate.get("alarm1");
+          const alarm2 = toUpdate.get("alarm2");
+          const alarm3 = toUpdate.get("alarm3");
+          const result = /* @__PURE__ */ new Map();
+          if (alarm1 && alarm2 && alarm3) {
+            const alarms = (alarm1.value >>> 0).toString(2) + (alarm2.value >>> 0).toString(2) + (alarm3.value >>> 0).toString(2);
+            if (alarms) {
+              result.set("alarms", { id: "alarms", value: alarms });
+            }
+          }
+          return result;
+        }
+      }
+    ];
+    this.postInitialFetchHooks = [
+      {
+        hookFn: (adapter2, initialValues) => {
+          const newFields = [];
+          const numberMPPTrackersObject = initialValues.get("info.numberMPPTrackers");
+          if (numberMPPTrackersObject) {
+            adapter2.log.info(`Running MPPT post init hook with ${numberMPPTrackersObject.value} MPPTrackers`);
+            for (let i = 0; i < numberMPPTrackersObject.value; i++) {
+              const stateId = `mppt${i + 1}power`;
+              const registerValue = 32324 + 2 * i;
+              newFields.push({
+                interval: 1 /* HIGH */,
+                state: {
+                  id: stateId,
+                  name: `MPPT ${i + 1} Power`,
+                  type: "number",
+                  unit: "kWh",
+                  role: "value.energy.produced",
+                  desc: `Total input power of MPPT${i + 1}`
+                },
+                register: { reg: registerValue, type: import_modbus_types.ModbusDatatype.int32, length: 2 }
+              });
+              adapter2.log.info(`Dynamically added state '${stateId}', register [${registerValue}]`);
+            }
+          }
+          return newFields;
+        }
       }
     ];
     const initalBlocks = this.blockFields(0 /* INTIAL */);
@@ -257,6 +327,8 @@ class InverterStates {
     for (const block of initalBlocks) {
       adapter.log.debug(`  [${block.Start}-${block.End}]`);
     }
+  }
+  calculateBlocks(adapter) {
     const highBlocks = this.blockFields(1 /* HIGH */);
     this.fetchBlocks.set(1 /* HIGH */, highBlocks);
     adapter.log.info(`Calculated ${highBlocks.length} fetch blocks for HIGH interval registers`);
@@ -339,6 +411,9 @@ class InverterStates {
   async createStates(adapter) {
     for (const field of this.dataFields) {
       const state = field.state;
+      if (!state.type) {
+        continue;
+      }
       const description = `${state.desc} (Register: ${field.register.reg})`;
       adapter.extendObject(state.id, {
         type: "state",
@@ -409,6 +484,14 @@ class InverterStates {
     }
     return toUpdate;
   }
+  runPostInitialFetchHooks(adapter, updatedValues) {
+    for (const postInitialFetchHook of this.postInitialFetchHooks) {
+      const additionalStates = postInitialFetchHook.hookFn(adapter, updatedValues);
+      this.dataFields.concat(additionalStates);
+      this.adapter.log.info(`Dynamically added ${additionalStates.length} states`);
+    }
+    this.calculateBlocks(adapter);
+  }
   async updateAdapterStates(adapter, toUpdate) {
     for (const updateEntry of toUpdate.values()) {
       if (updateEntry.value !== null) {
@@ -419,7 +502,7 @@ class InverterStates {
         adapter.log.silly(`Fetched value ${updateEntry.id}, val=[${updateEntry.value}]`);
       }
     }
-    return Promise.resolve(toUpdate.size);
+    return Promise.resolve(toUpdate);
   }
 }
 // Annotate the CommonJS export names for ESM import in node:

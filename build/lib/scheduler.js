@@ -44,7 +44,7 @@ class Scheduler {
         const start = new Date().getTime();
         const updatedCount = await this.intervals[idx].callback();
         const elapsed = new Date().getTime() - start;
-        this.adapter.log.info(`Updated ${updatedCount} registers in ${elapsed / 1e3} sec, [${this.intervals[idx].name}]`);
+        this.adapter.log.info(`Updated ${updatedCount.size} registers in ${elapsed / 1e3} sec, [${this.intervals[idx].name}]`);
       }
     }
     this.counter++;

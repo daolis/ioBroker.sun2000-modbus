@@ -283,6 +283,23 @@
       "native": {}
     },
     {
+      "_id": "alarms",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Alarms",
+          "de": "Alarme"
+        },
+        "role": "value",
+        "type": "string",
+        "unit": "",
+        "read": true,
+        "write": false,
+        "desc": "Alarme"
+      },
+      "native": {}
+    },
+    {
       "_id": "storage",
       "type": "channel",
       "common": {

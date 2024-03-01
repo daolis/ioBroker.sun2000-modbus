@@ -45,7 +45,8 @@ class Sun2000Modbus extends utils.Adapter {
       await this.setStateAsync("info.connection", true, true);
     }
     this.log.info("Update initial states");
-    await this.states.updateStates(this, this.device, import_states.UpdateIntervalID.INTIAL);
+    const initialValues = await this.states.updateStates(this, this.device, import_states.UpdateIntervalID.INTIAL);
+    this.states.runPostInitialFetchHooks(this, initialValues);
     this.log.info("Create states");
     await this.states.createStates(this);
     const self = this;
@@ -53,9 +54,9 @@ class Sun2000Modbus extends utils.Adapter {
       return this.states.updateStates(self, this.device, import_states.UpdateIntervalID.HIGH);
     });
     this.scheduler.addInterval("LOW", this.config.updateIntervalLow, async () => {
-      const countHigh = await this.states.updateStates(self, this.device, import_states.UpdateIntervalID.HIGH);
-      const countLow = await this.states.updateStates(self, this.device, import_states.UpdateIntervalID.LOW);
-      return Promise.resolve(countHigh + countLow);
+      const countHighResult = await this.states.updateStates(self, this.device, import_states.UpdateIntervalID.HIGH);
+      const countLowResult = await this.states.updateStates(self, this.device, import_states.UpdateIntervalID.LOW);
+      return Promise.resolve(new Map([...countHighResult, ...countLowResult]));
     });
     this.scheduler.init();
     this.log.info("Start fetching data from inverter");
@@ -72,7 +73,9 @@ class Sun2000Modbus extends utils.Adapter {
       const timeSinceLastUpdate = (new Date().getTime() - self.lastUpdated) / 1e3;
       this.log.debug(`Watchdog: ${timeSinceLastUpdate}`);
       if (timeSinceLastUpdate > 2 * maxInterval) {
+        await this.setStateAsync("info.connection", false, true);
         this.log.info(`Re-trigger sync... timeoutID: ${self.timeout}`);
+        this.device.close();
         await this.runSync();
       }
     }, maxInterval * 1e3);

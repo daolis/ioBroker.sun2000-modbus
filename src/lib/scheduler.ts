@@ -1,9 +1,10 @@
 import {AdapterInstance} from '@iobroker/adapter-core';
+import {StateToUpdate} from './states';
 
 interface Interval {
     name: string;
     timeout: number;
-    callback: (...args: any) => Promise<number>
+    callback: (...args: any) => Promise<Map<string, StateToUpdate>>
 }
 
 export class Scheduler {
@@ -17,7 +18,7 @@ export class Scheduler {
         this.adapter = adapter;
     }
 
-    public addInterval<TArgs extends any[]>(name: string, timeout: number, callback: (...args: TArgs) => Promise<number>): void {
+    public addInterval<TArgs extends any[]>(name: string, timeout: number, callback: (...args: TArgs) => Promise<Map<string, StateToUpdate>>): void {
         this.intervals.push({name: name, timeout: timeout, callback: callback});
     }
 
@@ -40,7 +41,7 @@ export class Scheduler {
                 const updatedCount = await this.intervals[idx].callback();
 
                 const elapsed = new Date().getTime() - start;
-                this.adapter.log.info(`Updated ${updatedCount} registers in ${elapsed / 1000} sec, [${this.intervals[idx].name}]`);
+                this.adapter.log.info(`Updated ${updatedCount.size} registers in ${elapsed / 1000} sec, [${this.intervals[idx].name}]`);
             }
         }
         this.counter++;
