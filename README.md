@@ -29,7 +29,11 @@ see the [documentation page](./docs/README.md)
 
 ### **WORK IN PROGRESS**
 
-* Added documentation - WIP
+* [#34](https://github.com/daolis/ioBroker.sun2000-modbus/issues/34) Added Battery registers: totalCharge, totalDischarge, batteryTemperature
+* [#32](https://github.com/daolis/ioBroker.sun2000-modbus/issues/32) Fixed: No data for ChargePower and CurrentDayChargeCapacity
+* [#20](https://github.com/daolis/ioBroker.sun2000-modbus/issues/20) Read alarm registers from inverter (alarms = bits, alarmsJSON = json array with alarms (name, id, level))
+* [#29](https://github.com/daolis/ioBroker.sun2000-modbus/issues/29) Added PVn Voltage and Current for available PV Strings 
+* Added initial documentation - WIP
 * [#26](https://github.com/daolis/ioBroker.sun2000-modbus/issues/26) Renamed stateOfCapacity to stateOfCharge\
   Migration of historical data: see [Migration of historical data (on state name change)](docs/migration.md)
 * Blocked reading of registers - faster when fetching data from inverter

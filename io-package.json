@@ -300,6 +300,23 @@
       "native": {}
     },
     {
+      "_id": "alarmsJSON",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Alarms JSON",
+          "de": "Alarme JSON"
+        },
+        "role": "json",
+        "type": "string",
+        "unit": "",
+        "read": true,
+        "write": false,
+        "desc": "Alarme JSON"
+      },
+      "native": {}
+    },
+    {
       "_id": "storage",
       "type": "channel",
       "common": {

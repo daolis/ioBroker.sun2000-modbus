@@ -24,6 +24,7 @@ __export(states_exports, {
 module.exports = __toCommonJS(states_exports);
 var import_modbus_types = require("./modbus/modbus_types");
 var import_state_enums = require("./state_enums");
+var import_alarms = require("./alarms");
 const MAX_GAP = 30;
 const MAX_BLOCKLENGTH = 110;
 var UpdateIntervalID = /* @__PURE__ */ ((UpdateIntervalID2) => {
@@ -56,6 +57,11 @@ class InverterStates {
         interval: 0 /* INTIAL */,
         state: { id: "info.ratedPower", name: "Rated power", type: "number", unit: "W", role: "value.power" },
         register: { reg: 30073, type: import_modbus_types.ModbusDatatype.int32, length: 2 }
+      },
+      {
+        interval: 0 /* INTIAL */,
+        state: { id: "info.numberPVStrings", name: "Number of PV strings", type: "number", unit: "", role: "value" },
+        register: { reg: 30071, type: import_modbus_types.ModbusDatatype.uint16, length: 1, gain: 1 }
       },
       {
         interval: 0 /* INTIAL */,
@@ -114,26 +120,6 @@ class InverterStates {
         register: { reg: 32118, type: import_modbus_types.ModbusDatatype.uint32, length: 2, gain: 100 }
       },
       {
-        interval: 2 /* LOW */,
-        state: { id: "PV1Voltage", name: "PV1 voltage", type: "number", unit: "V", role: "value.voltage" },
-        register: { reg: 32016, type: import_modbus_types.ModbusDatatype.int16, length: 1, gain: 10 }
-      },
-      {
-        interval: 2 /* LOW */,
-        state: { id: "PV1Current", name: "PV1 current", type: "number", unit: "A", role: "value.current" },
-        register: { reg: 32017, type: import_modbus_types.ModbusDatatype.int16, length: 1, gain: 100 }
-      },
-      {
-        interval: 2 /* LOW */,
-        state: { id: "PV2Voltage", name: "PV2 voltage", type: "number", unit: "V", role: "value.voltage" },
-        register: { reg: 32018, type: import_modbus_types.ModbusDatatype.int16, length: 1, gain: 10 }
-      },
-      {
-        interval: 2 /* LOW */,
-        state: { id: "PV2Current", name: "PV2 current", type: "number", unit: "A", role: "value.current" },
-        register: { reg: 32019, type: import_modbus_types.ModbusDatatype.int16, length: 1, gain: 100 }
-      },
-      {
         interval: 1 /* HIGH */,
         state: { id: "alarm1", name: "Alarm1" },
         register: { reg: 32008, type: import_modbus_types.ModbusDatatype.uint16, length: 1 }
@@ -165,8 +151,8 @@ class InverterStates {
         register: { reg: 37765, type: import_modbus_types.ModbusDatatype.int32, length: 2 },
         postUpdateHook: async (adapter2, value) => {
           return Promise.resolve(/* @__PURE__ */ new Map([
-            ["storage.chargePower", { id: "storage.chargePower", value: Math.max(0, value) }],
-            ["storage.dischargePower", { id: "storage.dischargePower", value: Math.abs(Math.min(0, value)) }]
+            ["storage.chargePower", { id: "storage.chargePower", value: Math.max(0, value), updateState: true }],
+            ["storage.dischargePower", { id: "storage.dischargePower", value: Math.abs(Math.min(0, value)), updateState: true }]
           ]));
         }
       },
@@ -182,6 +168,21 @@ class InverterStates {
       },
       {
         interval: 2 /* LOW */,
+        state: { id: "storage.totalCharge", name: "Total charge", type: "number", unit: "kWh", role: "value.energy", desc: "Charge Life-cycle accumulation" },
+        register: { reg: 37780, type: import_modbus_types.ModbusDatatype.uint32, length: 2, gain: 100 }
+      },
+      {
+        interval: 2 /* LOW */,
+        state: { id: "storage.totalDischarge", name: "Total discharge", type: "number", unit: "kWh", role: "value.energy", desc: "Discharge Life-cycle accumulation" },
+        register: { reg: 37782, type: import_modbus_types.ModbusDatatype.uint32, length: 2, gain: 100 }
+      },
+      {
+        interval: 2 /* LOW */,
+        state: { id: "storage.batteryTemperature", name: "Battery temperature", type: "number", unit: "\xB0C", role: "value.temperature", desc: "Battery temperature" },
+        register: { reg: 37022, type: import_modbus_types.ModbusDatatype.int16, length: 1, gain: 1 }
+      },
+      {
+        interval: 2 /* LOW */,
         state: { id: "grid.meterStatus", name: "Meter status", type: "string", role: "info.status" },
         register: { reg: 37100, type: import_modbus_types.ModbusDatatype.uint16, length: 1 },
         mapper: (value) => Promise.resolve(import_state_enums.MeterStatus[value])
@@ -192,8 +193,8 @@ class InverterStates {
         register: { reg: 37113, type: import_modbus_types.ModbusDatatype.int32, length: 2 },
         postUpdateHook: async (adapter2, value) => {
           return Promise.resolve(/* @__PURE__ */ new Map([
-            ["grid.feedIn", { id: "grid.feedIn", value: Math.max(0, value) }],
-            ["grid.supplyFrom", { id: "grid.supplyFrom", value: Math.abs(Math.min(0, value)) }]
+            ["grid.feedIn", { id: "grid.feedIn", value: Math.max(0, value), updateState: true }],
+            ["grid.supplyFrom", { id: "grid.supplyFrom", value: Math.abs(Math.min(0, value)), updateState: true }]
           ]));
         }
       },
@@ -283,10 +284,19 @@ class InverterStates {
           const alarm3 = toUpdate.get("alarm3");
           const result = /* @__PURE__ */ new Map();
           if (alarm1 && alarm2 && alarm3) {
-            const alarms = (alarm1.value >>> 0).toString(2) + (alarm2.value >>> 0).toString(2) + (alarm3.value >>> 0).toString(2);
+            const alarm1String = (alarm1.value >>> 0).toString(2).padStart(16, "0");
+            const alarm2String = (alarm2.value >>> 0).toString(2).padStart(16, "0");
+            const alarm3String = (alarm3.value >>> 0).toString(2).padStart(16, "0");
+            const alarms = alarm1String + alarm2String + alarm3String;
             if (alarms) {
-              result.set("alarms", { id: "alarms", value: alarms });
+              result.set("alarms", { id: "alarms", value: alarms, updateState: true });
             }
+            const alarm1Texts = this.textsFromBitfield(alarm1String, import_alarms.inverterAlarms1);
+            const alarm2Texts = this.textsFromBitfield(alarm2String, import_alarms.inverterAlarms2);
+            const alarm3Texts = this.textsFromBitfield(alarm3String, import_alarms.inverterAlarms3);
+            const allAlarms = alarm1Texts.concat(alarm2Texts, alarm3Texts);
+            result.set("alarmsJSON", { id: "alarmsJSON", value: JSON.stringify(allAlarms), updateState: true });
+            adapter2.log.debug(`Created alarm json from '${alarms}'`);
           }
           return result;
         }
@@ -319,6 +329,43 @@ class InverterStates {
           }
           return newFields;
         }
+      },
+      {
+        hookFn: (adapter2, initialValues) => {
+          const newFields = [];
+          const numberPVStrings = initialValues.get("info.numberPVStrings");
+          if (numberPVStrings) {
+            adapter2.log.info(`Running PVStrings post init hook with ${numberPVStrings.value} PV strings`);
+            for (let i = 0; i < numberPVStrings.value; i++) {
+              const stateIdVoltage = `PV${i + 1}Voltage`;
+              const stateIdCurrent = `PV${i + 1}Current`;
+              const registerValue = 32016 + 2 * i;
+              newFields.push({
+                interval: 2 /* LOW */,
+                state: {
+                  id: stateIdVoltage,
+                  name: `PV${i + 1} voltage`,
+                  type: "number",
+                  unit: "V",
+                  role: "value.voltage"
+                },
+                register: { reg: registerValue, type: import_modbus_types.ModbusDatatype.int16, length: 1, gain: 10 }
+              }, {
+                interval: 2 /* LOW */,
+                state: {
+                  id: stateIdCurrent,
+                  name: `PV${i + 1} current`,
+                  type: "number",
+                  unit: "A",
+                  role: "value.current"
+                },
+                register: { reg: registerValue + 1, type: import_modbus_types.ModbusDatatype.int16, length: 1, gain: 100 }
+              });
+              adapter2.log.info(`Dynamically added state '${stateIdVoltage}' and '${stateIdCurrent}', register [${registerValue}]`);
+            }
+          }
+          return newFields;
+        }
       }
     ];
     const initalBlocks = this.blockFields(0 /* INTIAL */);
@@ -327,6 +374,18 @@ class InverterStates {
     for (const block of initalBlocks) {
       adapter.log.debug(`  [${block.Start}-${block.End}]`);
     }
+  }
+  textsFromBitfield(bitString, lot) {
+    const result = [];
+    for (const [i, char] of Object.entries(bitString)) {
+      if (char === "1") {
+        const alarmText = lot.get(i);
+        if (alarmText) {
+          result.push(alarmText);
+        }
+      }
+    }
+    return result;
   }
   calculateBlocks(adapter) {
     const highBlocks = this.blockFields(1 /* HIGH */);
@@ -457,7 +516,7 @@ class InverterStates {
           if (field.mapper) {
             value = await field.mapper(value);
           }
-          toUpdate.set(field.state.id, { id: field.state.id, value });
+          toUpdate.set(field.state.id, { id: field.state.id, value, updateState: !!field.state.type });
           if (field.postUpdateHook) {
             const hookUpdates = await field.postUpdateHook(adapter, value);
             for (const entry of hookUpdates.entries()) {
@@ -487,13 +546,16 @@ class InverterStates {
   runPostInitialFetchHooks(adapter, updatedValues) {
     for (const postInitialFetchHook of this.postInitialFetchHooks) {
       const additionalStates = postInitialFetchHook.hookFn(adapter, updatedValues);
-      this.dataFields.concat(additionalStates);
+      this.dataFields = this.dataFields.concat(additionalStates);
       this.adapter.log.info(`Dynamically added ${additionalStates.length} states`);
     }
     this.calculateBlocks(adapter);
   }
   async updateAdapterStates(adapter, toUpdate) {
     for (const updateEntry of toUpdate.values()) {
+      if (!updateEntry.updateState) {
+        continue;
+      }
       if (updateEntry.value !== null) {
         await adapter.setStateAsync(updateEntry.id, { val: updateEntry.value, ack: true });
         if (updateEntry.postUpdateHook) {

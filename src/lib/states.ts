@@ -2,6 +2,7 @@ import {ModbusDatatype} from './modbus/modbus_types';
 import {InverterStatus, MeterStatus, StorageStatus} from './state_enums';
 import {AdapterInstance} from '@iobroker/adapter-core';
 import {ModbusDevice} from './modbus/modbus_device';
+import {alarm, inverterAlarms1, inverterAlarms2, inverterAlarms3} from './alarms';
 
 type MapperFn = (value: any) => Promise<any>
 type PostUpdateHookFn = (adapter: AdapterInstance, value: any) => Promise<Map<string, StateToUpdate>>
@@ -21,6 +22,7 @@ export interface StateToUpdate {
     id: string;
     value: any;
     postUpdateHook?: PostUpdateHookFn;
+    updateState: boolean;
 }
 
 interface State {
@@ -67,7 +69,7 @@ export interface FetchBlock {
 export class InverterStates {
 
     // private updateIntervals: UpdateIntervals
-    private readonly dataFields: DataField[];
+    private dataFields: DataField[];
     private readonly postFetchUpdateHooks: PostFetchUpdateHook[];
     private readonly postInitialFetchHooks: PostInitialFetchHook[];
     private adapter: AdapterInstance;
@@ -97,6 +99,11 @@ export class InverterStates {
                 interval: UpdateIntervalID.INTIAL,
                 state: {id: 'info.ratedPower', name: 'Rated power', type: 'number', unit: 'W', role: 'value.power'},
                 register: {reg: 30073, type: ModbusDatatype.int32, length: 2}
+            },
+            {
+                interval: UpdateIntervalID.INTIAL,
+                state: {id: 'info.numberPVStrings', name: 'Number of PV strings', type: 'number', unit: '', role: 'value'},
+                register: {reg: 30071, type: ModbusDatatype.uint16, length: 1, gain: 1}
             },
             {
                 interval: UpdateIntervalID.INTIAL,
@@ -157,26 +164,26 @@ export class InverterStates {
                 state: {id: 'yearlyEnergyYield', name: 'Yearly energy yield', type: 'number', unit: 'kWh', role: 'value.energy'},
                 register: {reg: 32118, type: ModbusDatatype.uint32, length: 2, gain: 100}
             },
-            {
-                interval: UpdateIntervalID.LOW,
-                state: {id: 'PV1Voltage', name: 'PV1 voltage', type: 'number', unit: 'V', role: 'value.voltage'},
-                register: {reg: 32016, type: ModbusDatatype.int16, length: 1, gain: 10}
-            },
-            {
-                interval: UpdateIntervalID.LOW,
-                state: {id: 'PV1Current', name: 'PV1 current', type: 'number', unit: 'A', role: 'value.current'},
-                register: {reg: 32017, type: ModbusDatatype.int16, length: 1, gain: 100}
-            },
-            {
-                interval: UpdateIntervalID.LOW,
-                state: {id: 'PV2Voltage', name: 'PV2 voltage', type: 'number', unit: 'V', role: 'value.voltage'},
-                register: {reg: 32018, type: ModbusDatatype.int16, length: 1, gain: 10}
-            },
-            {
-                interval: UpdateIntervalID.LOW,
-                state: {id: 'PV2Current', name: 'PV2 current', type: 'number', unit: 'A', role: 'value.current'},
-                register: {reg: 32019, type: ModbusDatatype.int16, length: 1, gain: 100}
-            },
+            // {
+            //     interval: UpdateIntervalID.LOW,
+            //     state: {id: 'PV1Voltage', name: 'PV1 voltage', type: 'number', unit: 'V', role: 'value.voltage'},
+            //     register: {reg: 32016, type: ModbusDatatype.int16, length: 1, gain: 10}
+            // },
+            // {
+            //     interval: UpdateIntervalID.LOW,
+            //     state: {id: 'PV1Current', name: 'PV1 current', type: 'number', unit: 'A', role: 'value.current'},
+            //     register: {reg: 32017, type: ModbusDatatype.int16, length: 1, gain: 100}
+            // },
+            // {
+            //     interval: UpdateIntervalID.LOW,
+            //     state: {id: 'PV2Voltage', name: 'PV2 voltage', type: 'number', unit: 'V', role: 'value.voltage'},
+            //     register: {reg: 32018, type: ModbusDatatype.int16, length: 1, gain: 10}
+            // },
+            // {
+            //     interval: UpdateIntervalID.LOW,
+            //     state: {id: 'PV2Current', name: 'PV2 current', type: 'number', unit: 'A', role: 'value.current'},
+            //     register: {reg: 32019, type: ModbusDatatype.int16, length: 1, gain: 100}
+            // },
             {
                 interval: UpdateIntervalID.HIGH,
                 state: {id: 'alarm1', name: 'Alarm1'}, // Just read register and store the value in updated map to process at the end
@@ -212,8 +219,8 @@ export class InverterStates {
                 register: {reg: 37765, type: ModbusDatatype.int32, length: 2},
                 postUpdateHook: async (adapter, value): Promise<Map<string, StateToUpdate>> => {
                     return Promise.resolve(new Map<string, StateToUpdate>([
-                        ['storage.chargePower', {id: 'storage.chargePower', value: Math.max(0, value)}],
-                        ['storage.dischargePower', {id: 'storage.dischargePower', value: Math.abs(Math.min(0, value))}]
+                        ['storage.chargePower', {id: 'storage.chargePower', value: Math.max(0, value), updateState: true}],
+                        ['storage.dischargePower', {id: 'storage.dischargePower', value: Math.abs(Math.min(0, value)), updateState: true}]
                     ]));
                 }
             },
@@ -227,6 +234,22 @@ export class InverterStates {
                 state: {id: 'storage.currentDayDischargeCapacity', name: 'CurrentDayDischargeCapacity', type: 'number', unit: 'kWh', role: 'value.energy', desc: 'TBD'},
                 register: {reg: 37786, type: ModbusDatatype.uint32, length: 2, gain: 100}
             },
+            {
+                interval: UpdateIntervalID.LOW,
+                state: {id: 'storage.totalCharge', name: 'Total charge', type: 'number', unit: 'kWh', role: 'value.energy', desc: 'Charge Life-cycle accumulation'},
+                register: {reg: 37780, type: ModbusDatatype.uint32, length: 2, gain: 100}
+            },
+            {
+                interval: UpdateIntervalID.LOW,
+                state: {id: 'storage.totalDischarge', name: 'Total discharge', type: 'number', unit: 'kWh', role: 'value.energy', desc: 'Discharge Life-cycle accumulation'},
+                register: {reg: 37782, type: ModbusDatatype.uint32, length: 2, gain: 100}
+            },
+            {
+                interval: UpdateIntervalID.LOW,
+                state: {id: 'storage.batteryTemperature', name: 'Battery temperature', type: 'number', unit: '°C', role: 'value.temperature', desc: 'Battery temperature'},
+                register: {reg: 37022, type: ModbusDatatype.int16, length: 1, gain: 1}
+            },
+
 
             // ####################################################################################################################################
             // grid (meter)
@@ -242,8 +265,8 @@ export class InverterStates {
                 register: {reg: 37113, type: ModbusDatatype.int32, length: 2},
                 postUpdateHook: async (adapter, value): Promise<Map<string, StateToUpdate>> => {
                     return Promise.resolve(new Map<string, StateToUpdate>([
-                        ['grid.feedIn', {id: 'grid.feedIn', value: Math.max(0, value)}],
-                        ['grid.supplyFrom', {id: 'grid.supplyFrom', value: Math.abs(Math.min(0, value))}]
+                        ['grid.feedIn', {id: 'grid.feedIn', value: Math.max(0, value), updateState: true}],
+                        ['grid.supplyFrom', {id: 'grid.supplyFrom', value: Math.abs(Math.min(0, value)), updateState: true}]
                     ]));
                 }
             },
@@ -329,16 +352,26 @@ export class InverterStates {
             },
             {
                 interval: UpdateIntervalID.HIGH,
-                hookFn: (adapter: AdapterInstance, toUpdate: Map<string, StateToUpdate>) => {
+                hookFn: (adapter: AdapterInstance, toUpdate: Map<string, StateToUpdate>): Map<string, StateToUpdate> => {
                     const alarm1 = toUpdate.get('alarm1');
                     const alarm2 = toUpdate.get('alarm2');
                     const alarm3 = toUpdate.get('alarm3');
-                    const result = new Map();
+                    const result: Map<string, StateToUpdate> = new Map();
                     if (alarm1 && alarm2 && alarm3) {
-                        const alarms = (alarm1.value >>> 0).toString(2) + (alarm2.value >>> 0).toString(2) + (alarm3.value >>> 0).toString(2);
+                        const alarm1String = (alarm1.value >>> 0).toString(2).padStart(16, '0');
+                        const alarm2String = (alarm2.value >>> 0).toString(2).padStart(16, '0');
+                        const alarm3String = (alarm3.value >>> 0).toString(2).padStart(16, '0');
+                        const alarms = alarm1String + alarm2String + alarm3String;
                         if (alarms) {
-                            result.set('alarms', {id: 'alarms', value: alarms})
+                            result.set('alarms', {id: 'alarms', value: alarms, updateState: true})
                         }
+
+                        const alarm1Texts = this.textsFromBitfield(alarm1String, inverterAlarms1)
+                        const alarm2Texts = this.textsFromBitfield(alarm2String, inverterAlarms2)
+                        const alarm3Texts = this.textsFromBitfield(alarm3String, inverterAlarms3)
+                        const allAlarms: alarm[] = alarm1Texts.concat(alarm2Texts, alarm3Texts);
+                        result.set('alarmsJSON', {id: 'alarmsJSON', value: JSON.stringify(allAlarms), updateState: true})
+                        adapter.log.debug(`Created alarm json from '${alarms}'`)
                     }
                     return result;
                 }
@@ -372,6 +405,43 @@ export class InverterStates {
                     }
                     return newFields;
                 }
+            },
+            {
+                hookFn: (adapter: AdapterInstance, initialValues: Map<string, StateToUpdate>) => {
+                    const newFields: DataField[] = [];
+                    const numberPVStrings = initialValues.get('info.numberPVStrings');
+                    if (numberPVStrings) {
+                        adapter.log.info(`Running PVStrings post init hook with ${numberPVStrings.value} PV strings`)
+                        for (let i = 0; i < numberPVStrings.value; i++) {
+                            const stateIdVoltage: string = `PV${i + 1}Voltage`;
+                            const stateIdCurrent: string = `PV${i + 1}Current`;
+                            const registerValue: number = 32016 + 2 * i; // startRegister + registerLength * indexOfTracker
+                            newFields.push({
+                                interval: UpdateIntervalID.LOW,
+                                state: {
+                                    id: stateIdVoltage,
+                                    name: `PV${i + 1} voltage`,
+                                    type: 'number',
+                                    unit: 'V',
+                                    role: 'value.voltage'
+                                },
+                                register: {reg: registerValue, type: ModbusDatatype.int16, length: 1, gain: 10}
+                            }, {
+                                interval: UpdateIntervalID.LOW,
+                                state: {
+                                    id: stateIdCurrent,
+                                    name: `PV${i + 1} current`,
+                                    type: 'number',
+                                    unit: 'A',
+                                    role: 'value.current'
+                                },
+                                register: {reg: registerValue + 1, type: ModbusDatatype.int16, length: 1, gain: 100}
+                            });
+                            adapter.log.info(`Dynamically added state '${stateIdVoltage}' and '${stateIdCurrent}', register [${registerValue}]`);
+                        }
+                    }
+                    return newFields;
+                }
             }
         ]
 
@@ -383,7 +453,20 @@ export class InverterStates {
         }
     }
 
-    private calculateBlocks(adapter: AdapterInstance) {
+    private textsFromBitfield(bitString: string, lot: Map<string, alarm>): alarm[] {
+        const result: alarm[] = [];
+        for (const [i, char] of Object.entries(bitString)) {
+            if (char === '1') {
+                const alarmText = lot.get(i);
+                if (alarmText) {
+                    result.push(alarmText);
+                }
+            }
+        }
+        return result
+    }
+
+    private calculateBlocks(adapter: AdapterInstance): void {
         const highBlocks = this.blockFields(UpdateIntervalID.HIGH);
         this.fetchBlocks.set(UpdateIntervalID.HIGH, highBlocks);
         adapter.log.info(`Calculated ${highBlocks.length} fetch blocks for HIGH interval registers`);
@@ -536,7 +619,7 @@ export class InverterStates {
                     if (field.mapper) {
                         value = await field.mapper(value);
                     }
-                    toUpdate.set(field.state.id, {id: field.state.id, value: value});
+                    toUpdate.set(field.state.id, {id: field.state.id, value: value, updateState: !!field.state.type});
                     if (field.postUpdateHook) {
                         const hookUpdates = await field.postUpdateHook(adapter, value);
                         for (const entry of hookUpdates.entries()) {
@@ -570,7 +653,7 @@ export class InverterStates {
     public runPostInitialFetchHooks(adapter: AdapterInstance, updatedValues: Map<string, StateToUpdate>): void {
         for (const postInitialFetchHook of this.postInitialFetchHooks) {
             const additionalStates = postInitialFetchHook.hookFn(adapter, updatedValues)
-            this.dataFields.concat(additionalStates)
+            this.dataFields = this.dataFields.concat(additionalStates)
             this.adapter.log.info(`Dynamically added ${additionalStates.length} states`);
         }
         this.calculateBlocks(adapter)
@@ -578,6 +661,10 @@ export class InverterStates {
 
     public async updateAdapterStates(adapter: AdapterInstance, toUpdate: Map<string, StateToUpdate>): Promise<Map<string, StateToUpdate>> {
         for (const updateEntry of toUpdate.values()) {
+            if (!updateEntry.updateState) {
+                continue;
+            }
+            // add field to update entry - do not set state! if type is not set.
             if (updateEntry.value !== null) {
                 await adapter.setStateAsync(updateEntry.id, {val: updateEntry.value, ack: true});
                 if (updateEntry.postUpdateHook) {
