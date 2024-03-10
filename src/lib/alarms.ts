@@ -1,5 +1,3 @@
-import internal from "node:stream";
-
 export enum alarmLevel {
     Major,
     Minor,
