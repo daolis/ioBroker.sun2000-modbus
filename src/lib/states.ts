@@ -371,7 +371,7 @@ export class InverterStates {
                         const alarm3Texts = this.textsFromBitfield(alarm3String, inverterAlarms3)
                         const allAlarms: alarm[] = alarm1Texts.concat(alarm2Texts, alarm3Texts);
                         result.set('alarmsJSON', {id: 'alarmsJSON', value: JSON.stringify(allAlarms), updateState: true})
-                        adapter.log.debug(`Created alarm json from '${alarms}'`)
+                        adapter.log.silly(`Created alarm json from '${alarms}'`)
                     }
                     return result;
                 }
@@ -629,8 +629,14 @@ export class InverterStates {
                 }
             } catch (e) {
                 adapter.log.warn(`Error while reading block from ${device.getIpAddress()}: [${block.Start}-${block.End}] '' with : ${e}`);
+                device.close()
+                await adapter.setStateAsync('info.connection', false, true);
+
                 break;
             }
+        }
+        if (device.isConnected()) {
+            await adapter.setStateAsync('info.connection', true, true);
         }
         toUpdate = this.runPostFetchHooks(adapter, toUpdate, interval);
 
