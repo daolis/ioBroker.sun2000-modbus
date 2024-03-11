@@ -10,6 +10,29 @@ There are 3 defined intervals:
 * `HIGH`: Fetch values with a short interval (default 5sec)
 * `LOW`: Fetch with a longer interval (default 30sec)
 
+**Example**\
+(One with `value mapper`, one with `post update hook`):
+```json
+{
+    interval: UpdateIntervalID.LOW,
+    state: {id: 'grid.meterStatus', name: 'Meter status', type: 'string', role: 'info.status'},
+    register: {reg: 37100, type: ModbusDatatype.uint16, length: 1, gain: 1},
+    mapper: value => Promise.resolve(MeterStatus[value])
+},
+{
+    interval: UpdateIntervalID.HIGH,
+    state: {id: 'grid.activePower', name: 'Active power', type: 'number', role: 'value.power.active', unit: 'W', desc: '(>0 feed-in to the power grid, <0: supply from the power grid)'},
+    register: {reg: 37113, type: ModbusDatatype.int32, length: 2},
+    postUpdateHook: async (adapter, value): Promise<Map<string, StateToUpdate>> =>
+    {
+        return Promise.resolve(new Map<string, StateToUpdate>([
+            ['grid.feedIn', {id: 'grid.feedIn', value: Math.max(0, value), updateState: true}],
+            ['grid.supplyFrom', {id: 'grid.supplyFrom', value: Math.abs(Math.min(0, value)), updateState: true}]
+        ]));
+    }
+}
+```
+
 ## Do not create or update state for field
 
 If the `state.type` property is not set, the status the value is read from the inverter, but no state will be created nor updated.
