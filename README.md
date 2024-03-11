@@ -26,6 +26,11 @@ Huawei products page: [solar.huawei.com](https://solar.huawei.com/at/professiona
 see the [documentation page](./docs/README.md)
 
 ## Changelog
+
+### **WORK IN PROGRESS**
+
+* Fixed setting connected flag
+
 ### 0.1.0 (2024-03-10)
 
 * [#34](https://github.com/daolis/ioBroker.sun2000-modbus/issues/34) Added Battery registers: totalCharge, totalDischarge, batteryTemperature
