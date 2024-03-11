@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "sun2000-modbus",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "news": {
+      "0.1.1": {
+        "en": "Fixed setting connected flag",
+        "de": "Feste Einstellung angeschlossenes Flag",
+        "ru": "Флаг подключен",
+        "pt": "Bandeira conectada de configuração fixa",
+        "nl": "Vaste instelling verbonden vlag",
+        "fr": "Affichage fixe connecté",
+        "it": "Impostazione fissa bandiera collegata",
+        "es": "Bandera conectada fijada",
+        "pl": "Ustawienie stałej flagi połączonej",
+        "uk": "Виправлено налаштування підключеного прапора",
+        "zh-cn": "固定设置连接的旗帜"
+      },
       "0.1.0": {
         "en": "* [#34](https://github.com/daolis/ioBroker.sun2000-modbus/issues/34) Added Battery registers: totalCharge, totalDischarge, batteryTemperature\n* [#32](https://github.com/daolis/ioBroker.sun2000-modbus/issues/32) Fixed: No data for ChargePower and CurrentDayChargeCapacity\n* [#20](https://github.com/daolis/ioBroker.sun2000-modbus/issues/20) Read alarm registers from inverter (alarms = bits, alarmsJSON = json array with alarms (name, id, level))\n* [#29](https://github.com/daolis/ioBroker.sun2000-modbus/issues/29) Added PVn Voltage and Current for available PV Strings \n* Added initial documentation - WIP\n* [#26](https://github.com/daolis/ioBroker.sun2000-modbus/issues/26) Renamed stateOfCapacity to stateOfCharge\\\n  Migration of historical data: see [Migration of historical data (on state name change)](docs/migration.md)\n* Blocked reading of registers - faster when fetching data from inverter",
         "de": "* [#34](https://github.com/daolis/ioBroker.sun2000-modbus/issues/34) Hinzugefügt Batterieregister: insgesamt Gesamtkosten Entladung, Batterie Temperatur\n* [#32](https://github.com/daolis/ioBroker.sun2000-modbus/issues/32) Behoben: Keine Daten für ChargePower und CurrentDayChargeCapacity\n* [#20](https://github.com/daolis/ioBroker.sun2000-modbus/issues/20) Alarmregister von Inverter lesen (Alarme = Bits, AlarmeJSON = json Array mit Alarmen (Name, id, Level))\n* [#29](https://github.com/daolis/ioBroker.sun2000-modbus/issues/29) PVn Spannung und Strom für verfügbare PV-Strings\n* Erstdokumentation hinzugefügt - WIP\n* [#26](https://github.com/daolis/ioBroker.sun2000-modbus/issues/26) Umbenannt StateOfCapacity zu Staat VonCharge\nMigration historischer Daten: siehe [Migration historischer Daten (auf Staatsnamen ändern)](docs/migration.md)\n* Blockiertes Lesen von Registern - schneller beim Abholen von Daten von Inverter",
