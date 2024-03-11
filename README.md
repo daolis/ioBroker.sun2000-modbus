@@ -34,7 +34,7 @@ see the [documentation page](./docs/README.md)
 ### 0.1.2 (2024-03-11)
 
 * Add update interval to state description
-* Update of totalPowerUse fixed 
+* Update of  fixed 
 * Fixed battery temperature gain (Reg: 37022, 'storage.batteryTemperature')
 
 ### 0.1.1 (2024-03-11)
