@@ -11,7 +11,7 @@ const MAX_GAP: number = 30;
 const MAX_BLOCKLENGTH: number = 110;
 
 interface DataField {
-    interval?: UpdateIntervalID;
+    interval: UpdateIntervalID;
     state: State;
     register: ModbusRegister;
     mapper?: MapperFn;
@@ -140,7 +140,7 @@ export class InverterStates {
             },
             {
                 interval: UpdateIntervalID.LOW,
-                state: {id: 'deviceStatus', name: 'Device status', type: 'string', unit: '', role: 'info.status'},
+                state: {id: 'deviceStatus', name: 'Device status', type: 'string', unit: '', role: 'info.status', desc: 'Device status'},
                 register: {reg: 32089, type: ModbusDatatype.uint16, length: 1},
                 mapper: value => Promise.resolve(InverterStatus[value])
             },
@@ -247,7 +247,7 @@ export class InverterStates {
             {
                 interval: UpdateIntervalID.LOW,
                 state: {id: 'storage.batteryTemperature', name: 'Battery temperature', type: 'number', unit: '°C', role: 'value.temperature', desc: 'Battery temperature'},
-                register: {reg: 37022, type: ModbusDatatype.int16, length: 1, gain: 1}
+                register: {reg: 37022, type: ModbusDatatype.int16, length: 1, gain: 10}
             },
 
 
@@ -343,9 +343,9 @@ export class InverterStates {
                     const powerActiveInverter = toUpdate.get('activePower');
                     const totalPowerUse = powerActiveInverter?.value - powerGridActive?.value;
                     adapter.log.silly(`PostFetchHook: calculate totalPowerUse ${powerGridActive?.value}, ${powerActiveInverter?.value}, ${totalPowerUse}`);
-                    const result = new Map();
+                    const result: Map<string, StateToUpdate> = new Map();
                     if (totalPowerUse) {
-                        result.set('totalPowerUse', {id: 'totalPowerUse', value: totalPowerUse})
+                        result.set('totalPowerUse', {id: 'totalPowerUse', value: totalPowerUse, updateState: true})
                     }
                     return result;
                 }
@@ -563,7 +563,8 @@ export class InverterStates {
             if (!state.type) {
                 continue;
             }
-            const description = `${state.desc} (Register: ${field.register.reg})`
+            const stateDesc = state.desc ? state.desc : '';
+            const description = `${stateDesc} (Register: ${field.register.reg}) - Update interval: ${UpdateIntervalID[field.interval]}`
             adapter.extendObject(state.id, {
                 type: 'state',
                 common: {

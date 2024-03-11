@@ -304,7 +304,7 @@
         "unit": "W",
         "read": true,
         "write": false,
-        "desc": "Total power use ('inputPower' + 'grid.supplyFrom')"
+        "desc": "Calculated: Total power use ('inputPower' + 'grid.supplyFrom')"
       },
       "native": {}
     },
@@ -321,7 +321,7 @@
         "unit": "",
         "read": true,
         "write": false,
-        "desc": "Alarme"
+        "desc": "Alarme (Registers: 32008+32009+32010)"
       },
       "native": {}
     },
@@ -338,7 +338,7 @@
         "unit": "",
         "read": true,
         "write": false,
-        "desc": "Alarme JSON"
+        "desc": "Calculated: Alarms JSON"
       },
       "native": {}
     },

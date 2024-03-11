@@ -95,7 +95,7 @@ class InverterStates {
       },
       {
         interval: 2 /* LOW */,
-        state: { id: "deviceStatus", name: "Device status", type: "string", unit: "", role: "info.status" },
+        state: { id: "deviceStatus", name: "Device status", type: "string", unit: "", role: "info.status", desc: "Device status" },
         register: { reg: 32089, type: import_modbus_types.ModbusDatatype.uint16, length: 1 },
         mapper: (value) => Promise.resolve(import_state_enums.InverterStatus[value])
       },
@@ -179,7 +179,7 @@ class InverterStates {
       {
         interval: 2 /* LOW */,
         state: { id: "storage.batteryTemperature", name: "Battery temperature", type: "number", unit: "\xB0C", role: "value.temperature", desc: "Battery temperature" },
-        register: { reg: 37022, type: import_modbus_types.ModbusDatatype.int16, length: 1, gain: 1 }
+        register: { reg: 37022, type: import_modbus_types.ModbusDatatype.int16, length: 1, gain: 10 }
       },
       {
         interval: 2 /* LOW */,
@@ -271,7 +271,7 @@ class InverterStates {
           adapter2.log.silly(`PostFetchHook: calculate totalPowerUse ${powerGridActive == null ? void 0 : powerGridActive.value}, ${powerActiveInverter == null ? void 0 : powerActiveInverter.value}, ${totalPowerUse}`);
           const result = /* @__PURE__ */ new Map();
           if (totalPowerUse) {
-            result.set("totalPowerUse", { id: "totalPowerUse", value: totalPowerUse });
+            result.set("totalPowerUse", { id: "totalPowerUse", value: totalPowerUse, updateState: true });
           }
           return result;
         }
@@ -473,7 +473,8 @@ class InverterStates {
       if (!state.type) {
         continue;
       }
-      const description = `${state.desc} (Register: ${field.register.reg})`;
+      const stateDesc = state.desc ? state.desc : "";
+      const description = `${stateDesc} (Register: ${field.register.reg}) - Update interval: ${UpdateIntervalID[field.interval]}`;
       adapter.extendObject(state.id, {
         type: "state",
         common: {
