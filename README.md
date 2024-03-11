@@ -26,8 +26,7 @@ Huawei products page: [solar.huawei.com](https://solar.huawei.com/at/professiona
 see the [documentation page](./docs/README.md)
 
 ## Changelog
-
-### **WORK IN PROGRESS**
+### 0.1.2 (2024-03-11)
 
 * Add update interval to state description
 * Update of totalPowerUse fixed 

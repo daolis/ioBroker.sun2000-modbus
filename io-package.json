@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "sun2000-modbus",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "news": {
+      "0.1.2": {
+        "en": "Add update interval to state description\nUpdate of totalPowerUse fixed \nFixed battery temperature gain (Reg: 37022, 'storage.batteryTemperature')",
+        "de": "Aktualisierungsintervall zur Zustandsbeschreibung hinzufügen\nAktualisierung der Gesamtsumme Leistung Befestigte Verwendung\nFeste Batterietemperaturzunahme (Reg: 37022, 'storage.batteryTemperature')",
+        "ru": "Добавить интервал обновления для описания состояния\nОбновление общего Мощность Использовать фиксированный\n37022, 'storage.batteryTemperature')",
+        "pt": "Adicionar intervalo de atualização à descrição do estado\nAtualização do total Poder Utilização fixa\nGanho fixo da temperatura da bateria (Reg: 37022, 'storage.batteryTemperature')",
+        "nl": "Updateinterval toevoegen aan statusbeschrijving\nBijwerken van het totaal Vermogen Vast gebruiken\nVaste batterijtemperatuurstijging (Reg: 37022, 'opslag.batteryTemperature')",
+        "fr": "Ajouter l'intervalle de mise à jour à la description d'état\nMise à jour du total Puissance Utiliser fixe\nGain de température fixe de la batterie (Reg: 37022, 'stockage.batteryTemperature')",
+        "it": "Aggiungi intervallo di aggiornamento alla descrizione dello stato\nAggiornamento del totale Potenza Utilizzazione fissa\nRisolto aumento della temperatura della batteria (Reg: 37022, 'storage.batteryTemperature')",
+        "es": "Agregar intervalo de actualización a la descripción del estado\nActualización del total Poder Uso fijo\nGanancia de temperatura fija de la batería (Reg: 37022, 'storage.batteryTemperature')",
+        "pl": "Dodaj przedział aktualizacji do opisu stanu\nAktualizacja całości Moc Użyj stałej\nStałe zwiększenie temperatury akumulatora (Reg: 37022, \"storage.batteryTemperatura\")",
+        "uk": "Додати інтервал оновлення до державного опису\nОновлення всього Потужність Використання фіксованого\nВиправлено підвищення температури акумулятора (Reg: 37022, 'storage.batteryTemperature')",
+        "zh-cn": "添加更新间隔到状态描述\n更新总数 权力 使用固定\n固定电池温度增量(Reg:37022,'s storage.batteryTemperature') "
+      },
       "0.1.1": {
         "en": "Fixed setting connected flag",
         "de": "Feste Einstellung angeschlossenes Flag",
