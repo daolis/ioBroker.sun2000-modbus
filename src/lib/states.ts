@@ -2,7 +2,7 @@ import {ModbusDatatype} from './modbus/modbus_types';
 import {InverterStatus, MeterStatus, StorageStatus} from './state_enums';
 import {AdapterInstance} from '@iobroker/adapter-core';
 import {ModbusDevice} from './modbus/modbus_device';
-import {alarm, inverterAlarms1, inverterAlarms2, inverterAlarms3} from './alarms';
+import {alarm, alarmLevel, inverterAlarms1, inverterAlarms2, inverterAlarms3} from './alarms';
 
 type MapperFn = (value: any) => Promise<any>
 type PostUpdateHookFn = (adapter: AdapterInstance, value: any) => Promise<Map<string, StateToUpdate>>
@@ -459,6 +459,7 @@ export class InverterStates {
             if (char === '1') {
                 const alarmText = lot.get(i);
                 if (alarmText) {
+                    alarmText.levelName = alarmLevel[alarmText.level]
                     result.push(alarmText);
                 }
             }

@@ -381,6 +381,7 @@ class InverterStates {
       if (char === "1") {
         const alarmText = lot.get(i);
         if (alarmText) {
+          alarmText.levelName = import_alarms.alarmLevel[alarmText.level];
           result.push(alarmText);
         }
       }

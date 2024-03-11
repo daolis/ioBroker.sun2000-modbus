@@ -5,9 +5,10 @@ export enum alarmLevel {
 }
 
 export interface alarm {
-    name: string
-    id: number
-    level: alarmLevel
+    name: string;
+    id: number;
+    level: alarmLevel;
+    levelName: string;
 }
 
 export const inverterAlarms1: Map<string, alarm> = new Map()
