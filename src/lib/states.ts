@@ -611,7 +611,7 @@ export class InverterStates {
                     // adapter.log.debug(`GetFromBuffer: value for register [${field.register.reg},${field.register.length}] (${field.state.name}): ${value}`);
 
                     if (value === undefined) {
-                        this.adapter.log.error(`Value for register '${field.register.reg}' is undefined!`);
+                        this.adapter.log.silly(`Value for register '${field.register.reg}' is undefined!`);
                         continue;
                     }
 
