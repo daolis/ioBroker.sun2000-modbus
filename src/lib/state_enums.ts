@@ -49,3 +49,14 @@ export enum InverterStatus {
     DCInputDetection = 0x0900,
     Running_OffGridCharging = 0x0A00
 }
+
+export enum ChargeFromGrid {
+    Disabled,
+    Enabled
+}
+export enum ForcibleChargeDischarge {
+    Stop,
+    Charge,
+    Discharge
+}
+
