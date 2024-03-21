@@ -509,7 +509,7 @@ class InverterStates {
           const valueBuffer = buffer.subarray(startOffset, startOffset + field.register.length * 2);
           let value = import_modbus_types.ModbusDatatype.fromBuffer(field.register.type, valueBuffer);
           if (value === void 0) {
-            this.adapter.log.error(`Value for register '${field.register.reg}' is undefined!`);
+            this.adapter.log.silly(`Value for register '${field.register.reg}' is undefined!`);
             continue;
           }
           if (field.register.gain) {

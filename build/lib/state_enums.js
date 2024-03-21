@@ -18,6 +18,8 @@ var __copyProps = (to, from, except, desc) => {
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 var state_enums_exports = {};
 __export(state_enums_exports, {
+  ChargeFromGrid: () => ChargeFromGrid,
+  ForcibleChargeDischarge: () => ForcibleChargeDischarge,
   InverterStatus: () => InverterStatus,
   MeterStatus: () => MeterStatus,
   StorageForcibleChargeDischarge: () => StorageForcibleChargeDischarge,
@@ -76,8 +78,21 @@ var InverterStatus = /* @__PURE__ */ ((InverterStatus2) => {
   InverterStatus2[InverterStatus2["Running_OffGridCharging"] = 2560] = "Running_OffGridCharging";
   return InverterStatus2;
 })(InverterStatus || {});
+var ChargeFromGrid = /* @__PURE__ */ ((ChargeFromGrid2) => {
+  ChargeFromGrid2[ChargeFromGrid2["Disabled"] = 0] = "Disabled";
+  ChargeFromGrid2[ChargeFromGrid2["Enabled"] = 1] = "Enabled";
+  return ChargeFromGrid2;
+})(ChargeFromGrid || {});
+var ForcibleChargeDischarge = /* @__PURE__ */ ((ForcibleChargeDischarge2) => {
+  ForcibleChargeDischarge2[ForcibleChargeDischarge2["Stop"] = 0] = "Stop";
+  ForcibleChargeDischarge2[ForcibleChargeDischarge2["Charge"] = 1] = "Charge";
+  ForcibleChargeDischarge2[ForcibleChargeDischarge2["Discharge"] = 2] = "Discharge";
+  return ForcibleChargeDischarge2;
+})(ForcibleChargeDischarge || {});
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
+  ChargeFromGrid,
+  ForcibleChargeDischarge,
   InverterStatus,
   MeterStatus,
   StorageForcibleChargeDischarge,
