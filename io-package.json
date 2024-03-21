@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "sun2000-modbus",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "news": {
+      "0.1.3": {
+        "en": "...",
+        "de": "...",
+        "ru": "...",
+        "pt": "...",
+        "nl": "...",
+        "fr": "...",
+        "it": "...",
+        "es": "...",
+        "pl": "...",
+        "uk": "...",
+        "zh-cn": "..."
+      },
       "0.1.2": {
         "en": "Add update interval to state description\nUpdate of totalPowerUse fixed \nFixed battery temperature gain (Reg: 37022, 'storage.batteryTemperature')",
         "de": "Aktualisierungsintervall zur Zustandsbeschreibung hinzufügen\nAktualisierung der Gesamtsumme Leistung Befestigte Verwendung\nFeste Batterietemperaturzunahme (Reg: 37022, 'storage.batteryTemperature')",
