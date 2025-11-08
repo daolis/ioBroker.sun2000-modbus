@@ -126,6 +126,7 @@
     "extIcon": "https://raw.githubusercontent.com/daolis/ioBroker.sun2000-modbus/main/admin/sun2000-modbus.png",
     "readme": "https://github.com/daolis/ioBroker.sun2000-modbus/blob/main/README.md",
     "loglevel": "info",
+    "tier": 2,
     "mode": "daemon",
     "type": "energy",
     "compact": true,
