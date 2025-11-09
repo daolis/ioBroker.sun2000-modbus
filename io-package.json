@@ -118,7 +118,10 @@
       "luna2000",
       "sun2000"
     ],
-    "license": "MIT",
+    "licenseInformation": {
+      "type": "free",
+      "license": "MIT"
+    },
     "platform": "Javascript/Node.js",
     "main": "build/main.js",
     "icon": "sun2000-modbus.png",
