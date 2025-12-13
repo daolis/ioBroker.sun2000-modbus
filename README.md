@@ -64,4 +64,4 @@ see the [documentation page](./docs/README.md)
 ## License
 MIT License
 
-Copyright (c) 2024 daolis <stephan.bechter@gmail.com>
+Copyright (c) 2024-2025 daolis <stephan.bechter@gmail.com>
