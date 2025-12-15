@@ -120,7 +120,6 @@
     ],
     "license": "MIT",
     "platform": "Javascript/Node.js",
-    "main": "build/main.js",
     "icon": "sun2000-modbus.png",
     "enabled": true,
     "extIcon": "https://raw.githubusercontent.com/daolis/ioBroker.sun2000-modbus/main/admin/sun2000-modbus.png",
