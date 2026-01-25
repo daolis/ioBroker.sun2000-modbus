@@ -9,6 +9,7 @@
   "homepage": "https://github.com/daolis/ioBroker.sun2000-modbus",
   "license": "MIT",
   "keywords": [
+    "ioBroker",
     "inverter",
     "huawei",
     "modbus",
