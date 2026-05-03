@@ -61,6 +61,8 @@ see the [documentation page](./docs/README.md)
 
 * (daolis) initial release
 
+[Older changelogs can be found there](CHANGELOG_OLD.md)
+
 ## License
 MIT License
 
