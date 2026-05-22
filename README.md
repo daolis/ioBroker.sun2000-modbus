@@ -26,6 +26,10 @@ Huawei products page: [solar.huawei.com](https://solar.huawei.com/at/professiona
 see the [documentation page](./docs/README.md)
 
 ## Changelog
+
+### **WORK IN PROGRESS**
+- (ioBroker-Bot) Adapter requires js-controller >= 6.0.11 now.
+
 ### 0.1.3 (2024-03-21)
 
 * Small bug fix...
